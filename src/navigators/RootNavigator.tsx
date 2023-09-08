@@ -17,7 +17,13 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 const RootNavigator = () => {
   return (
     <RootStack.Navigator>
-        <RootStack.Screen name="TabsStack" component={TabsNavigator}/>
+        <RootStack.Screen 
+        name="TabsStack" 
+        component={TabsNavigator} 
+        options={{
+          headerShown: false,
+        }}
+        />
         <RootStack.Screen name="Details" component={DetailsScreen}/>
     </RootStack.Navigator>
   )
