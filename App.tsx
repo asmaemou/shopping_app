@@ -3,6 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import {DefaultTheme, NavigationContainer, Theme} from "@react-navigation/native";
 import RootNavigator from "./src/navigators/RootNavigator";
 import { useMemo } from 'react';
+import 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   const theme: Theme = useMemo(() => ({...DefaultTheme,colors:{
@@ -17,12 +19,12 @@ export default function App() {
 []
 );
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <NavigationContainer theme={theme}>
         <RootNavigator/>
         <StatusBar style="dark"/>
       </NavigationContainer>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
