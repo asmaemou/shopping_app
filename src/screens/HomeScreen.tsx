@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import MasonryList from 'reanimated-masonry-list';
+import { BlurView} from 'expo-blur';
 
 const AVATAR_URL = 'https://media.istockphoto.com/id/1319763895/photo/smiling-mixed-race-mature-man-on-grey-background.jpg?s=1024x1024&w=is&k=20&c=N8tCKAiS77uX8ZGltdjkhzh5pXzvuNHg48acJETZfs8=';
 
@@ -167,7 +168,9 @@ const HomeScreen = () => {
                 data={[1,2,3,454,4,56,44]}
                 keyExtractor={(item): string => item}
                 numColumns={2}
-                contentContainerStyle={{paddingHorizontal:24,gap:12}}
+                contentContainerStyle={{paddingHorizontal:24}}
+
+                containerStyle={{ padding:16, }}
                 showsVerticalScrollIndicator={false}
                 renderItem={({item,i}) => 
                 <View style={{
@@ -175,13 +178,68 @@ const HomeScreen = () => {
                     position:"relative",
                     overflow:'hidden',
                     backgroundColor:"red",
+                    marginTop:16,
+                    borderRadius:24,
                     }}>
                     <Image source={{
-                        uri:"https://media.istockphoto.com/id/1307568521/photo/its-the-denim-that-does-it-for-me.jpg?s=1024x1024&w=is&k=20&c=LhJXuPZLTEdSHb617yPuomdq_QlCoI0rwcKyoO90Mi0="
+                        uri:"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fG1lbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60"
                     }} 
                     resizeMode="cover" 
-                    style={StyleSheet.absoluteFill}
-                    />
+                    style={[StyleSheet.absoluteFill]}/>
+                    <View style={[StyleSheet.absoluteFill,
+                    {
+                        padding:12,
+                    },
+                    ]}>
+                        <View style={{flexDirection:'row',gap:8,padding:4}}>
+                            <Text style={{
+                                flex:1,
+                                fontSize:14,
+                                fontWeight:'600',
+                                color:colors.text,
+                                }}>
+                                PUMA everywhere 
+                            </Text>
+                            <View style={{
+                                backgroundColor: colors.background,
+                                borderRadius:100,
+                                height:32,
+                                aspectRatio:1,
+                                alignItems:'center',
+                                justifyContent:'center'}}>
+                                    <Icons 
+                                    name="favorite-border" 
+                                    size={20} 
+                                    color={colors.text}/>
+                            </View>
+                        </View>
+                                <View style={{flex:1}}/>
+                        <BlurView style={{
+                            flexDirection:'row',
+                            backgroundColor:"rgba(0,0,0,0.5)",
+                            alignItems:"center",
+                            padding:8,
+                            borderRadius:100,
+                            overflow:"hidden",
+                            }} 
+                            intensity={20}>
+                                <Text style={{
+                                    flex:1,
+                                    fontSize:16,
+                                    fontWeight:"600",
+                                    color:"#fff",
+                                    marginLeft:4,
+                                    }}numberOfLines={1}>160.00 MAD</Text>
+                                    <TouchableOpacity style={{
+                                        paddingHorizontal:12,
+                                        paddingVertical:8,
+                                        borderRadius:100,
+                                        backgroundColor:"#fff",
+                                        }}>
+                                        <Icons name="add-shopping-cart" size={20} color='#000'/>
+                                    </TouchableOpacity>
+                            </BlurView>
+                    </View>
                 </View>
             }
                 onEndReachedThreshold={0.1}
