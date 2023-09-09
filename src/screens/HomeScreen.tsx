@@ -167,8 +167,7 @@ const HomeScreen = () => {
                 data={[1,2,3,454,4,56,44]}
                 keyExtractor={(item): string => item}
                 numColumns={2}
-                contentContainerStyle={{paddingHorizontal:24}}
-                
+                contentContainerStyle={{paddingHorizontal:24,gap:12}}
                 showsVerticalScrollIndicator={false}
                 renderItem={({item,i}) => 
                 <View style={{
