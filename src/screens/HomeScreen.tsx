@@ -1,10 +1,15 @@
 import { View, Text, ScrollView, Image, TouchableOpacity,StyleSheet,ActivityIndicator, FlatList } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import MasonryList from 'reanimated-masonry-list';
 import { BlurView} from 'expo-blur';
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import CustomBackdrop from "../components/CustomBackdrop";
+import FilterView from "../components/FilterView";
+// import FilterView from '../components/FilterView'; // Adjust the path as needed
+
 
 const AVATAR_URL = 'https://media.istockphoto.com/id/1319763895/photo/smiling-mixed-race-mature-man-on-grey-background.jpg?s=1024x1024&w=is&k=20&c=N8tCKAiS77uX8ZGltdjkhzh5pXzvuNHg48acJETZfs8=';
 
@@ -17,9 +22,16 @@ const GATEGORIES=[
     "Fitness",
 ];
 
+
 const HomeScreen = () => {
     const {colors} = useTheme()
     const [CategoryIndex, setCategoryIndex] = useState(0)
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+    const openFilterModal = useCallback(() => {
+        bottomSheetModalRef.current?.present();
+      }, []);
+ 
     return (
         <ScrollView>
             <SafeAreaView style={{paddingVertical: 24,gap:24}}>
@@ -86,16 +98,19 @@ const HomeScreen = () => {
                                 Search
                                 </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{
-                        width:52,
-                        aspectRatio:1,
-                        alignItems:"center",
-                        justifyContent:"center",
-                        borderRadius:52, 
-                        backgroundColor:colors.primary,
-                }}>
-                    <Icons name="tune" size={24} color={colors.background}/>
-                    </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={openFilterModal} // Use onPress to specify the function
+                    style={{
+                        width: 52,
+                        aspectRatio: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 52, 
+                        backgroundColor: colors.primary,
+                    }}
+                    >
+                    <Icons name="tune" size={24} color={colors.background} />
+                </TouchableOpacity>
             </View>
             {/* Grid Collection view */}
             <View style={{paddingHorizontal:24}}>
@@ -245,7 +260,22 @@ const HomeScreen = () => {
                 onEndReachedThreshold={0.1}
             />
             </SafeAreaView>
-        </ScrollView>
+            <BottomSheetModal
+                snapPoints={["67%"]}
+                index={0}
+                ref={bottomSheetModalRef}
+                backdropComponent={(props) => <CustomBackdrop {...props} />}
+                backgroundStyle={{
+                borderRadius: 24,
+                backgroundColor: colors.card,
+                }}
+                handleIndicatorStyle={{
+                backgroundColor: colors.primary,
+                }}
+            >
+                <FilterView />
+                </BottomSheetModal>
+            </ScrollView>
     );
 };
 
