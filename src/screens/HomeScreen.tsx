@@ -8,7 +8,7 @@ import { BlurView} from 'expo-blur';
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomBackdrop from "../components/CustomBackdrop";
 import FilterView from "../components/FilterView";
-// import FilterView from '../components/FilterView'; // Adjust the path as needed
+
 
 
 const AVATAR_URL = 'https://media.istockphoto.com/id/1319763895/photo/smiling-mixed-race-mature-man-on-grey-background.jpg?s=1024x1024&w=is&k=20&c=N8tCKAiS77uX8ZGltdjkhzh5pXzvuNHg48acJETZfs8=';
@@ -261,7 +261,7 @@ const HomeScreen = () => {
             />
             </SafeAreaView>
             <BottomSheetModal
-                snapPoints={["67%"]}
+                snapPoints={["90%"]}//make the filters bigger vertically
                 index={0}
                 ref={bottomSheetModalRef}
                 backdropComponent={(props) => <CustomBackdrop {...props} />}
