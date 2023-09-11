@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
 import { useTheme } from '@react-navigation/native';
 
 const MAX_PRICE = 500;
@@ -20,25 +20,26 @@ const FilterView = () => {
           <Text>Reset</Text>
         </TouchableOpacity>
       </View>
-      {/* Price Range Selector */}
+      {/* Range Selector */}
       <View style={{ paddingHorizontal: 24 }}>
-        <View style={{ marginBottom: 16 }}>
+        <View style={{ marginBottom: 24 }}>
           <Text>Price Range</Text>
         </View>
         <View style={{ height: 1, width: '100%', backgroundColor: theme.colors.border }}>
           <View
             style={{
               position: "absolute",
-              left: leftValue,
-              width: widthValue,
+              left: 0, // Numeric value for left
+              width: widthValue, // Numeric value for width
               height: "100%",
               backgroundColor: theme.colors.primary,
             }}
           />
+
           <View
             style={{
               position: 'absolute',
-              left: '10%',
+              left: "10%", // Numeric value for left
               height: 24,
               aspectRatio: 1,
               alignItems: 'center',
@@ -46,22 +47,73 @@ const FilterView = () => {
               borderRadius: 100,
               borderColor: theme.colors.primary,
               borderWidth: 2,
-              backgroundColor:theme.colors.background,
+              backgroundColor: theme.colors.background,
               transform: [
                 {
-                translateX: -12, 
+                  translateX: -12,
                 },
                 {
-                translateY: -12, 
+                  translateY: -12,
                 },
-            ],
-              
+              ],
             }}
-          />
+          >
+            <View
+              style={{
+                width: 3,
+                height: 3,
+                borderRadius: 10,
+                backgroundColor: theme.colors.primary,
+              }}
+            />
+          </View>
+
+          <View style={{
+            position: "absolute",
+            left: "10%",
+          }}>
+            {/* Placeholder for SliderHandle component */}
+          </View>
+
+          <View style={{
+            position: "absolute",
+            right: "14%",
+          }}>
+            {/* Placeholder for SliderHandle component */}
+          </View>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginTop: 12,
+        }}>
           <Text style={{ color: theme.colors.text, opacity: 0.5 }}>0$</Text>
           <Text style={{ color: theme.colors.text, opacity: 0.5 }}>{MAX_PRICE}$</Text>
+        </View>
+      </View>
+
+      {/*  Sports Category Filter  */}
+      <View style={{ paddingHorizontal: 24 }}>
+        <Text style={{ fontSize: 14, fontWeight: "600", marginBottom: 12 }}>Sports</Text>
+        <View style={{ flexDirection: 'row', flexWrap: "wrap", gap: 12 }}>
+          {new Array(20).fill("").map((_, i) => (
+            <View key={i} style={{
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              borderRadius: 100,
+              backgroundColor: i === 0 ? theme.colors.primary : theme.colors.text,
+            }}>
+              <Text style={{
+                fontSize: 14,
+                fontWeight: "600",
+                color: i === 0 ? theme.colors.background : theme.colors.text,
+              }}>
+                {i === 0 ? "Running [3]" : "Some Text"}
+              </Text>
+            </View>
+          ))}
         </View>
       </View>
     </View>
@@ -69,3 +121,38 @@ const FilterView = () => {
 };
 
 export default FilterView;
+
+
+const SliderHandle = () => {
+    const theme=useTheme()
+    return(
+        <View
+            style={{
+            height: 24,
+            aspectRatio: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 100,
+            borderColor: theme.colors.primary,
+            backgroundColor: theme.colors.background,
+            transform: [
+                {
+                translateX: -12,
+                },
+                {
+                translateY: -12,
+                },
+            ],
+            }}
+      >
+        <View
+          style={{
+            width: 3,
+            height: 3,
+            borderRadius: 10,
+            backgroundColor: theme.colors.primary,
+          }}
+        />
+      </View>
+    )
+}
