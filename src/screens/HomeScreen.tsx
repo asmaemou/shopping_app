@@ -261,7 +261,7 @@ const HomeScreen = () => {
             />
             </SafeAreaView>
             <BottomSheetModal
-                snapPoints={["90%"]}//make the filters bigger vertically
+                snapPoints={["76%"]}//make the filters bigger vertically
                 index={0}
                 ref={bottomSheetModalRef}
                 backdropComponent={(props) => <CustomBackdrop {...props} />}
