@@ -18,6 +18,7 @@ import {
   import FilterView from "../components/FilterView";
   import { TabsStackScreenProps } from "../navigators/TabsNavigator";
   
+  
   const CATEGORIES = [
     "Clothing",
     "Shoes",
@@ -26,6 +27,7 @@ import {
     "Accessories 3",
     "Accessories 4",
   ];
+
   
   const AVATAR_URL =
     "https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80";
@@ -201,6 +203,7 @@ import {
                   });
                 }}
                 price={130}
+              
                 imageUrl="https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80"
               />
               <View style={{ flex: 1, gap: 12 }}>

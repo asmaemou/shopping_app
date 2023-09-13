@@ -1,7 +1,7 @@
 import React from 'react'
 import {NavigatorScreenParams} from "@react-navigation/native"
 import { View,Text } from 'react-native'
-import {createNativeStackNavigator} from "@react-navigation/native-stack"
+import {NativeStackScreenProps,createNativeStackNavigator} from "@react-navigation/native-stack"
 import HomeScreen from '../screens/HomeScreen';
 import DetailsScreen from '../screens/DetailsScreen';
 import TabsNavigator,{TabsStackParamList } from './TabsNavigator';
@@ -13,6 +13,9 @@ export type RootStackParamList = {
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
+
+export type RootStackScreenProps<T extends keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, T>;
 
 const RootNavigator = () => {
   return (
