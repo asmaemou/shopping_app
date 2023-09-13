@@ -2,7 +2,6 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { createBottomTabNavigator,BottomTabScreenProps, } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
-import LoginScreen from '../screens/LoginScreen';
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { RootStackScreenProps } from "./RootNavigator";
@@ -32,14 +31,6 @@ const TabsNavigator = () => {
             tabBarShowLabel:false,
         }}
       >
-        <TabsStack.Screen 
-        name="Login" 
-        component={LoginScreen} 
-        options={{
-            tabBarIcon(props){
-                return <Icons name="login" {...props}/>
-            },
-        }}/>
         <TabsStack.Screen 
         name="Home" 
         component={HomeScreen} 
