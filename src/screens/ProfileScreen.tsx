@@ -1,100 +1,344 @@
-import React from "react";
 import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-} from "react-native";
-import { useTheme } from "@react-navigation/native";
-import Icons from "@expo/vector-icons/MaterialIcons";
-
-const AVATAR_URL =
-"https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80";
-
-const ProfileScreen = () => {
-  const { colors } = useTheme();
-
-  return (
-    <ScrollView>
-      {/* Profile Header */}
-      <View style={styles.profileHeader}>
-        <Image
-          source={{
-            uri: AVATAR_URL,
-          }}
-          style={styles.avatar}
-          resizeMode="cover"
-        />
-        <View style={styles.profileInfo}>
-          <Text style={styles.profileUsername}>Hi, Asmae 👋</Text>
-          <Text style={styles.profileDescription}>
-            Discover fashion that suits your style
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={() => {
-            // Handle logout logic
+    View,
+    Text,
+    TouchableOpacity,
+    ScrollView,
+    Image,
+    TextInput,
+    Modal,
+  } from "react-native";
+  import React, { useState } from "react";
+  import { SafeAreaView } from "react-native-safe-area-context";
+  import * as ImagePicker from "expo-image-picker";
+  import { COLORS, FONTS } from "../constants";
+  import { MaterialIcons } from "@expo/vector-icons";
+  import { imagesDataURL } from "../constants/data";
+  import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
+  
+  const EditProfile = ({ navigation }) => {
+    const [selectedImage, setSelectedImage] = useState(imagesDataURL[0]);
+    const [name, setName] = useState("Melissa Peters");
+    const [email, setEmail] = useState("metperters@gmail.com");
+    const [password, setPassword] = useState("randompassword");
+    const [country, setCountry] = useState("Nigeria");
+  
+    const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
+    const today = new Date();
+    const startDate = getFormatedDate(
+      today.setDate(today.getDate() + 1),
+      "YYYY/MM/DD"
+    );
+    const [selectedStartDate, setSelectedStartDate] = useState("01/01/1990");
+    const [startedDate, setStartedDate] = useState("12/12/2023");
+  
+    const handleChangeStartDate = (propDate) => {
+      setStartedDate(propDate);
+    };
+  
+    const handleOnPressStartDate = () => {
+      setOpenStartDatePicker(!openStartDatePicker);
+    };
+  
+    const handleImageSelection = async () => {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 4],
+        quality: 1,
+      });
+  
+      console.log(result);
+  
+      if (!result.canceled) {
+        setSelectedImage(result.assets[0].uri);
+      }
+    };
+  
+    function renderDatePicker() {
+      return (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={openStartDatePicker}
+        >
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <View
+              style={{
+                margin: 20,
+                backgroundColor: COLORS.primary,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 20,
+                padding: 35,
+                width: "90%",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 5,
+              }}
+            >
+              <DatePicker
+                mode="calendar"
+                minimumDate={startDate}
+                selected={startedDate}
+                onDateChanged={handleChangeStartDate}
+                onSelectedChange={(date) => setSelectedStartDate(date)}
+                options={{
+                  backgroundColor: COLORS.primary,
+                  textHeaderColor: "#469ab6",
+                  textDefaultColor: COLORS.white,
+                  selectedTextColor: COLORS.white,
+                  mainColor: "#469ab6",
+                  textSecondaryColor: COLORS.white,
+                  borderColor: "rgba(122,146,165,0.1)",
+                }}
+              />
+  
+              <TouchableOpacity onPress={handleOnPressStartDate}>
+                <Text style={{ ...FONTS.body3, color: COLORS.white }}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      );
+    }
+  
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: COLORS.white,
+          paddingHorizontal: 22,
+        }}
+      >
+        <View
+          style={{
+            marginHorizontal: 12,
+            flexDirection: "row",
+            justifyContent: "center",
           }}
         >
-          <Icons name="logout" size={24} color={colors.text} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Profile Content */}
-      <View style={styles.profileContent}>
-        {/* Add your profile content here */}
-        <Text style={styles.sectionTitle}>My Profile</Text>
-        {/* Add more profile details, posts, or any other information here */}
-      </View>
-    </ScrollView>
-  );
-};
-
-const styles = StyleSheet.create({
-  profileHeader: {
-    paddingHorizontal: 24,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingVertical: 24,
-  },
-  avatar: {
-    width: 52,
-    aspectRatio: 1,
-    borderRadius: 52,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileUsername: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  profileDescription: {
-    opacity: 0.75,
-  },
-  logoutButton: {
-    width: 52,
-    aspectRatio: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 52,
-    borderWidth: 1,
-  },
-  profileContent: {
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  // Add more styles for your profile content here
-});
-
-export default ProfileScreen;
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{
+              position: "absolute",
+              left: 0,
+            }}
+          >
+            <MaterialIcons
+              name="keyboard-arrow-left"
+              size={24}
+              color={COLORS.black}
+            />
+          </TouchableOpacity>
+  
+          <Text style={{ ...FONTS.h3 }}>Edit Profile</Text>
+        </View>
+  
+        <ScrollView>
+          <View
+            style={{
+              alignItems: "center",
+              marginVertical: 22,
+            }}
+          >
+            <TouchableOpacity onPress={handleImageSelection}>
+              <Image
+                source={{ uri: selectedImage }}
+                style={{
+                  height: 170,
+                  width: 170,
+                  borderRadius: 85,
+                  borderWidth: 2,
+                  borderColor: COLORS.primary,
+                }}
+              />
+  
+              <View
+                style={{
+                  position: "absolute",
+                  bottom: 0,
+                  right: 10,
+                  zIndex: 9999,
+                }}
+              >
+                <MaterialIcons
+                  name="photo-camera"
+                  size={32}
+                  color={COLORS.primary}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+  
+          <View>
+            <View
+              style={{
+                flexDirection: "column",
+                marginBottom: 6,
+              }}
+            >
+              <Text style={{ ...FONTS.h4 }}>Name</Text>
+              <View
+                style={{
+                  height: 44,
+                  width: "100%",
+                  borderColor: COLORS.secondaryGray,
+                  borderWidth: 1,
+                  borderRadius: 4,
+                  marginVertical: 6,
+                  justifyContent: "center",
+                  paddingLeft: 8,
+                }}
+              >
+                <TextInput
+                  value={name}
+                  onChangeText={(value) => setName(value)}
+                  editable={true}
+                />
+              </View>
+            </View>
+  
+            <View
+              style={{
+                flexDirection: "column",
+                marginBottom: 6,
+              }}
+            >
+              <Text style={{ ...FONTS.h4 }}>Email</Text>
+              <View
+                style={{
+                  height: 44,
+                  width: "100%",
+                  borderColor: COLORS.secondaryGray,
+                  borderWidth: 1,
+                  borderRadius: 4,
+                  marginVertical: 6,
+                  justifyContent: "center",
+                  paddingLeft: 8,
+                }}
+              >
+                <TextInput
+                  value={email}
+                  onChangeText={(value) => setEmail(value)}
+                  editable={true}
+                />
+              </View>
+            </View>
+  
+            <View
+              style={{
+                flexDirection: "column",
+                marginBottom: 6,
+              }}
+            >
+              <Text style={{ ...FONTS.h4 }}>Password</Text>
+              <View
+                style={{
+                  height: 44,
+                  width: "100%",
+                  borderColor: COLORS.secondaryGray,
+                  borderWidth: 1,
+                  borderRadius: 4,
+                  marginVertical: 6,
+                  justifyContent: "center",
+                  paddingLeft: 8,
+                }}
+              >
+                <TextInput
+                  value={password}
+                  onChangeText={(value) => setPassword(value)}
+                  editable={true}
+                  secureTextEntry
+                />
+              </View>
+            </View>
+  
+            <View
+              style={{
+                flexDirection: "column",
+                marginBottom: 6,
+              }}
+            >
+              <Text style={{ ...FONTS.h4 }}>Date or Birth</Text>
+              <TouchableOpacity
+                onPress={handleOnPressStartDate}
+                style={{
+                  height: 44,
+                  width: "100%",
+                  borderColor: COLORS.secondaryGray,
+                  borderWidth: 1,
+                  borderRadius: 4,
+                  marginVertical: 6,
+                  justifyContent: "center",
+                  paddingLeft: 8,
+                }}
+              >
+                <Text>{selectedStartDate}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+  
+          <View
+            style={{
+              flexDirection: "column",
+              marginBottom: 6,
+            }}
+          >
+            <Text style={{ ...FONTS.h4 }}>Country</Text>
+            <View
+              style={{
+                height: 44,
+                width: "100%",
+                borderColor: COLORS.secondaryGray,
+                borderWidth: 1,
+                borderRadius: 4,
+                marginVertical: 6,
+                justifyContent: "center",
+                paddingLeft: 8,
+              }}
+            >
+              <TextInput
+                value={country}
+                onChangeText={(value) => setCountry(value)}
+                editable={true}
+              />
+            </View>
+          </View>
+  
+          <TouchableOpacity
+            style={{
+              backgroundColor: COLORS.primary,
+              height: 44,
+              borderRadius: 6,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                ...FONTS.body3,
+                color: COLORS.white,
+              }}
+            >
+              Save Change
+            </Text>
+          </TouchableOpacity>
+  
+          {renderDatePicker()}
+        </ScrollView>
+      </SafeAreaView>
+    );
+  };
+  
+  export default EditProfile;
