@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: any) => {
         authenticated: boolean| null
     }>({
         token: null, 
-        authenticated: null,
+        authenticated: false,
     });
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: any) => {
             const token = await SecureStore.getItemAsync(TOKEN_KEY);
             console.log('stored',token);
             if(token){
-                axios.default.header.common['Authorization'] = `Bearer ${token}`;
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
                 setAuthState({
                     token:token,
                     authenticated: true,
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: any) => {
         try {
           const result = await axios.post(`${API_URL}/auth`, { email, password });
       
-          console.log("result", result);
+          console.log("result", result.data.token);
       
           setAuthState({
             token: result.data.token,

@@ -7,8 +7,6 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import { RootStackScreenProps } from "./RootNavigator";
 
 
-
-
 export type TabsStackParamList={
     Home:undefined;
     Cart:undefined;

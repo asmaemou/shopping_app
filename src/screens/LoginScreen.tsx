@@ -5,8 +5,8 @@ import { useAuth } from '../../app/context/AuthContext';
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { onLogin, onRegister } = useAuth();
-
+  const { onLogin, onRegister, authState } = useAuth();
+  console.log(authState, "authState in LOgin screen")
   const login = async () => {
     const result = await onLogin!(email, password);
     if (result && result.error) {
@@ -17,6 +17,7 @@ const LoginScreen = () => {
   // We automatically call the login after a successful registration
   const register = async () => {
     const result = await onRegister!(email, password);
+    console.log(result, "result")
     if (result && result.error) {
       alert(result.msg);
     } else {
@@ -44,6 +45,7 @@ const LoginScreen = () => {
           placeholder="Password"
           onChangeText={(text: string) => setPassword(text)}
           value={password}
+          secureTextEntry={true}
         />
         <Button title="Login" onPress={login} />
         <Button title="Register" onPress={register} />

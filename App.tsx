@@ -16,12 +16,6 @@ import { TabsStackScreenProps } from './src/navigators/TabsNavigator';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-
-  return(
-    <AuthProvider>
-      <Layout></Layout>
-    </AuthProvider>
-  )
   const theme: Theme = useMemo(() => ({...DefaultTheme,colors:{
     ...DefaultTheme.colors,
     background:"#f5f5f5",
@@ -34,7 +28,8 @@ export default function App() {
 []
 );
   return (
-    <SafeAreaProvider> 
+    <AuthProvider>
+      <SafeAreaProvider> 
       <GestureHandlerRootView style={styles.container}>
       <NavigationContainer theme={theme}>
         <BottomSheetModalProvider>
@@ -44,30 +39,14 @@ export default function App() {
       </NavigationContainer>
     </GestureHandlerRootView>
     </SafeAreaProvider>
+    </AuthProvider>
+    
     
   );
 }
 
-export const Layout = ({ navigation }: TabsStackScreenProps<"Home">) => {
-  const { authState, onLogout } = useAuth();
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {authState?.authenticated ? (
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{
-              headerRight: () => <Button onPress={onLogout} title="Sign out" />,
-            }}
-          />
-        ) : (
-          <Stack.Screen name="Login" component={LoginScreen} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
+
+
 
 const styles = StyleSheet.create({
   container: {

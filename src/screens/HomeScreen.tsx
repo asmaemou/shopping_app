@@ -17,7 +17,7 @@ import {
   import CustomBackdrop from "../components/CustomBackdrop";
   import FilterView from "../components/FilterView";
   import { TabsStackScreenProps } from "../navigators/TabsNavigator";
-  
+  import { useAuth } from "../../app/context/AuthContext";
   
   const CATEGORIES = [
     "Clothing",
@@ -69,6 +69,7 @@ import {
     const { colors } = useTheme();
     const [categoryIndex, setCategoryIndex] = useState(0);
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const { onLogout} = useAuth()
   
     const openFilterModal = useCallback(() => {
       bottomSheetModalRef.current?.present();
@@ -123,7 +124,7 @@ import {
                 borderColor: colors.border,
               }}
             >
-              <Icons name="notifications" size={24} color={colors.text} />
+              <Icons name="logout" size={24} color={colors.text} onPress={onLogout} />
             </TouchableOpacity>
           </View>
   
