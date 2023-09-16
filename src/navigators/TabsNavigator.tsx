@@ -47,6 +47,7 @@ const TabsNavigator = () => {
         name="Cart"
         component={Example}
         options={{
+          headerShown: false,
           tabBarIcon(props) {
             return <Icons name="shopping-cart" {...props} />;
           },
@@ -56,6 +57,7 @@ const TabsNavigator = () => {
         name="Payment"
         component={Example}
         options={{
+          headerShown: false,
           tabBarIcon(props) {
             return <Icons name="account-balance-wallet" {...props} />;
           },
@@ -65,6 +67,7 @@ const TabsNavigator = () => {
         name="Profile"
         component={ProfileScreen}
         options={{
+          headerShown: false,
           tabBarIcon(props) {
             return <Icons name="person" {...props} />;
           },

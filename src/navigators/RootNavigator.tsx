@@ -36,7 +36,7 @@ console.log(authState, "useAuth")
                 headerShown: false,
               }}
             />
-            <RootStack.Screen name="Details" component={DetailsScreen} />
+            <RootStack.Screen name="Details" component={DetailsScreen} options={{headerShown:false}} />
           </>
         ) :<RootStack.Screen name="Login" component={LoginScreen} />}
       </RootStack.Navigator>

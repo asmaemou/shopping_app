@@ -302,7 +302,7 @@ const DetailsScreen = ({
                   justifyContent: "center",
                 }}
               >
-                <Icons name="arrow-forward" size={24} color={colors.text} />
+                {/* <Icons name="arrow-forward" size={24} color={colors.text} /> */}
               </View>
             </TouchableOpacity>
           </View>
