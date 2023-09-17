@@ -6,7 +6,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { onLogin, onRegister, authState } = useAuth();
-  console.log(authState, "authState in LOgin screen")
+  console.log(authState, "authState in Login screen")
   const login = async () => {
     const result = await onLogin!(email, password);
     if (result && result.error) {

@@ -23,7 +23,7 @@ import {
     "Clothing",
     "Shoes",
     "Accessories",
-    "Accessories 2",
+    "Coat",
     "Accessories 3",
     "Accessories 4",
   ];

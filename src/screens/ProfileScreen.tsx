@@ -136,7 +136,7 @@ import {
             }}
           >
             <MaterialIcons
-              name="keyboard-arrow-left"
+              name="arrow-back"
               size={24}
               color={COLORS.black}
             />
