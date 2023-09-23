@@ -53,5 +53,8 @@ export const FONTS = {
 }
 
 const appTheme = { COLORS, SIZES, FONTS }
+export const themeColors = {
+    bg: '#877dfa',
+ }   
 
 export default appTheme

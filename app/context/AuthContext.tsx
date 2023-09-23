@@ -54,17 +54,18 @@ export const AuthProvider = ({ children }: any) => {
 
     const login = async (email: string, password: string) => {
         try {
-          const result = await axios.post(`${API_URL}/auth`, { email, password });
+            const result: String = `Email: ${email}, Password: ${password}`
+        //   const result = await axios.post(`${API_URL}/auth`, { email, password });
       
-          console.log("result", result.data.token);
+        //   console.log("result", result.data.token);
       
           setAuthState({
-            token: result.data.token,
+            token: TOKEN_KEY,
             authenticated: true,
           });
       
-          axios.defaults.headers.common['Authorization'] = `Bearer ${result.data.token}`;
-          await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
+          axios.defaults.headers.common['Authorization'] = `Bearer ${TOKEN_KEY}`;
+          await SecureStore.setItemAsync(TOKEN_KEY, TOKEN_KEY);
           return result;
         } catch (e) {
           return { error: true, msg: (e as any).response.data.msg };

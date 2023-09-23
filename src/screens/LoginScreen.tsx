@@ -1,23 +1,41 @@
-import { Image, View, TextInput, Button, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { themeColors } from '../constants/theme';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../app/context/AuthContext';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-const LoginScreen = () => {
+type RootStackParamList = {
+  SignUp: undefined;
+};
+
+type NavigationProps = StackNavigationProp<RootStackParamList, 'SignUp'>;
+
+export default function LoginScreen() {
+  const navigation = useNavigation<NavigationProps>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { onLogin, onRegister, authState } = useAuth();
-  console.log(authState, "authState in Login screen")
+
   const login = async () => {
-    const result = await onLogin!(email, password);
+    const result = await onLogin(email, password);
     if (result && result.error) {
       alert(result.msg);
     }
   };
 
-  // We automatically call the login after a successful registration
   const register = async () => {
-    const result = await onRegister!(email, password);
-    console.log(result, "result")
+    const result = await onRegister(email, password);
     if (result && result.error) {
       alert(result.msg);
     } else {
@@ -26,55 +44,123 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={{
-          uri: 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
-        }}
-        style={styles.image}
-      />
-      <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          onChangeText={(text: string) => setEmail(text)}
-          value={email}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          onChangeText={(text: string) => setPassword(text)}
-          value={password}
-          secureTextEntry={true}
-        />
-        <Button title="Login" onPress={login} />
-        <Button title="Register" onPress={register} />
-      </View>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
+        <View style={styles.imageContainer}>
+          <Image source={require('../assets/images/login.png')} style={styles.image} />
+        </View>
+        <View style={styles.formContainer}>
+          <View style={styles.form}>
+            <Text style={styles.label}>Email Address</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="email"
+              onChangeText={(text) => setEmail(text)}
+              value={email}
+            />
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.input}
+              secureTextEntry
+              placeholder="password"
+              onChangeText={(text) => setPassword(text)}
+              value={password}
+            />
+            <TouchableOpacity style={styles.forgotPassword}>
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.loginButton} onPress={login}>
+              <Text style={styles.loginButtonText}>Login</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.orText}>Or</Text>
+          <View style={styles.signUpContainer}>
+            <Text style={styles.signUpText}>Don't have an account?</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+              <Text style={styles.signUpLink}> Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: themeColors.bg,
+  },
+  imageContainer: {
+    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
   },
   image: {
     width: 200,
     height: 200,
-    marginBottom: 20,
+  },
+  formContainer: {
+    flex: 1,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   form: {
-    width: '80%',
+    marginVertical: 10,
+  },
+  label: {
+    color: 'gray',
+    marginLeft: 10,
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
+    backgroundColor: '#E5E5E5',
+    color: 'gray',
+    borderRadius: 20,
+    paddingHorizontal: 20,
     marginBottom: 10,
-    paddingLeft: 10,
+  },
+  forgotPassword: {
+    alignItems: 'flex-end',
+  },
+  forgotPasswordText: {
+    color: 'gray',
+    marginBottom: 5,
+  },
+  loginButton: {
+    backgroundColor: 'yellow',
+    borderRadius: 20,
+    paddingVertical: 10,
+  },
+  loginButtonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: 'gray',
+  },
+  orText: {
+    fontSize: 20,
+    color: 'gray',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  signUpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  signUpText: {
+    color: 'gray',
+    fontWeight: 'bold',
+  },
+  signUpLink: {
+    color: 'yellow',
+    fontWeight: 'bold',
   },
 });
-
-export default LoginScreen;
