@@ -4,9 +4,18 @@ import { themeColors } from '../constants/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeftIcon } from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+
+type RootStackParamList = {
+  Login: undefined;
+};
+
+type NavigationProps = StackNavigationProp<RootStackParamList, 'Login'>;
 
 export default function SignUpScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps>();
+
 
   return (
     <View style={styles.container}>
@@ -53,7 +62,7 @@ export default function SignUpScreen() {
           </TouchableOpacity>
         </View>
         <Text style={styles.orText}>Or</Text>
-        <View style={styles.socialButtons}>
+        {/* <View style={styles.socialButtons}>
           <TouchableOpacity style={styles.socialButton}>
             <Image
               source={require('../assets/images/icons/google.png')}
@@ -72,7 +81,7 @@ export default function SignUpScreen() {
               style={styles.socialIcon}
             />
           </TouchableOpacity>
-        </View>
+        </View> */}
         <View style={styles.loginContainer}>
           <Text style={styles.loginText}>Already have an account?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>

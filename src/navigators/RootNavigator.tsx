@@ -7,12 +7,14 @@ import DetailsScreen from '../screens/DetailsScreen';
 import TabsNavigator, { TabsStackParamList } from './TabsNavigator';
 import { useAuth, AuthProvider } from '../../app/context/AuthContext';
 import LoginScreen from '../screens/LoginScreen';
+import SignUpScreen from '../screens/SignUpScreen';
 
 
 export type RootStackParamList = {
   TabsStack: NavigatorScreenParams<TabsStackParamList>;
   Details: undefined;
   Login: undefined;
+  SignUp: undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -38,7 +40,11 @@ console.log(authState, "useAuth")
             />
             <RootStack.Screen name="Details" component={DetailsScreen} options={{headerShown:false}} />
           </>
-        ) :<RootStack.Screen name="Login" component={LoginScreen} />}
+        ) :
+        <>
+          <RootStack.Screen name="Login" component={LoginScreen} />
+          <RootStack.Screen name="SignUp" component={SignUpScreen} />
+        </>}
       </RootStack.Navigator>
  
 
