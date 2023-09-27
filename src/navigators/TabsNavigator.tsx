@@ -10,6 +10,8 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import { RootStackScreenProps } from "./RootNavigator";
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import ProfileScreen from "../screens/ProfileScreen";
+import PaymentScreen from "../screens/PaymentScreen";
+
 
 export type TabsStackParamList = {
   Home: undefined;
@@ -55,7 +57,7 @@ const TabsNavigator = () => {
       />
       <TabsStack.Screen
         name="Payment"
-        component={Example}
+        component={PaymentScreen}
         options={{
           headerShown: false,
           tabBarIcon(props) {
