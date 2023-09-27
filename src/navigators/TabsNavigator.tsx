@@ -11,6 +11,7 @@ import { RootStackScreenProps } from "./RootNavigator";
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import ProfileScreen from "../screens/ProfileScreen";
 import PaymentScreen from "../screens/PaymentScreen";
+import CartScreen from "../screens/CartScreen";
 
 
 export type TabsStackParamList = {
@@ -47,7 +48,7 @@ const TabsNavigator = () => {
       />
       <TabsStack.Screen
         name="Cart"
-        component={Example}
+        component={CartScreen}
         options={{
           headerShown: false,
           tabBarIcon(props) {
