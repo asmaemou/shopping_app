@@ -1,11 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { themeColors } from '../constants/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeftIcon } from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-
 
 type RootStackParamList = {
   Login: undefined;
@@ -16,18 +14,16 @@ type NavigationProps = StackNavigationProp<RootStackParamList, 'Login'>;
 export default function SignUpScreen() {
   const navigation = useNavigation<NavigationProps>();
 
-
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+    >
       <SafeAreaView style={{ flex: 0, backgroundColor: themeColors.bg }} />
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}
-          >
-            <ArrowLeftIcon size={20} color="black" />
-          </TouchableOpacity>
+          {/* Add any header content here */}
         </View>
         <View style={styles.imageContainer}>
           <Image
@@ -40,19 +36,26 @@ export default function SignUpScreen() {
         <View style={styles.form}>
           <Text style={styles.label}>Full Name</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
             value="john snow"
             placeholder="Enter Name"
           />
           <Text style={styles.label}>Email Address</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
             value="john@gmail.com"
             placeholder="Enter Email"
           />
           <Text style={styles.label}>Password</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
+            secureTextEntry
+            value="test12345"
+            placeholder="Enter Password"
+          />
+          <Text style={styles.label}>Confirm Password</Text>
+          <TextInput
+            style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
             secureTextEntry
             value="test12345"
             placeholder="Enter Password"
@@ -62,26 +65,6 @@ export default function SignUpScreen() {
           </TouchableOpacity>
         </View>
         <Text style={styles.orText}>Or</Text>
-        {/* <View style={styles.socialButtons}>
-          <TouchableOpacity style={styles.socialButton}>
-            <Image
-              source={require('../assets/images/icons/google.png')}
-              style={styles.socialIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton}>
-            <Image
-              source={require('../assets/icons/apple.png')}
-              style={styles.socialIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton}>
-            <Image
-              source={require('../assets/icons/facebook.png')}
-              style={styles.socialIcon}
-            />
-          </TouchableOpacity>
-        </View> */}
         <View style={styles.loginContainer}>
           <Text style={styles.loginText}>Already have an account?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
@@ -101,12 +84,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-  },
-  backButton: {
-    backgroundColor: 'yellow',
-    padding: 10,
-    borderRadius: 30,
-    marginLeft: 10,
   },
   imageContainer: {
     flexDirection: 'row',
@@ -139,7 +116,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   signupButton: {
-    backgroundColor: 'yellow',
+    backgroundColor: 'purple',
     borderRadius: 20,
     paddingVertical: 10,
   },
@@ -147,7 +124,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: 'gray',
+    color: 'black',
   },
   orText: {
     fontSize: 20,
@@ -181,7 +158,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   loginLink: {
-    color: 'yellow',
+    color: 'purple',
     fontWeight: 'bold',
   },
 });

@@ -44,8 +44,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
+    <View style={styles.container}>
+      <SafeAreaView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
@@ -55,18 +55,18 @@ export default function LoginScreen() {
         </View>
         <View style={styles.formContainer}>
           <View style={styles.form}>
-            <Text style={styles.label}>Email Address</Text>
+          <Text style={styles.label}>Email Address</Text>
             <TextInput
-              style={styles.input}
-              placeholder="email"
+              style={[styles.input, { paddingVertical: 10, fontSize: 15 }]} // Adjust paddingVertical and fontSize as needed
+              placeholder="Enter your email"
               onChangeText={(text) => setEmail(text)}
               value={email}
             />
             <Text style={styles.label}>Password</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { paddingVertical: 10, fontSize: 15 }]} // Adjust paddingVertical and fontSize as needed
               secureTextEntry
-              placeholder="password"
+              placeholder="Enter your password"
               onChangeText={(text) => setPassword(text)}
               value={password}
             />
@@ -85,8 +85,8 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 }
 
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   loginButton: {
-    backgroundColor: 'yellow',
+    backgroundColor: 'purple',
     borderRadius: 20,
     paddingVertical: 10,
   },
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: 'gray',
+    color: 'black',
   },
   orText: {
     fontSize: 20,
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   signUpLink: {
-    color: 'yellow',
+    color: 'purple',
     fontWeight: 'bold',
   },
 });
