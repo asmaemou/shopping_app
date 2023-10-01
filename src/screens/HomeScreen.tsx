@@ -5,6 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import MasonryList from 'reanimated-masonry-list';
 import { BlurView} from 'expo-blur';
+import { useAuth } from "../context/AuthCont";
 
 const AVATAR_URL = 'https://media.istockphoto.com/id/1319763895/photo/smiling-mixed-race-mature-man-on-grey-background.jpg?s=1024x1024&w=is&k=20&c=N8tCKAiS77uX8ZGltdjkhzh5pXzvuNHg48acJETZfs8=';
 
@@ -18,11 +19,16 @@ const GATEGORIES=[
 ];
 
 const HomeScreen = () => {
-    const {colors} = useTheme()
-    const [CategoryIndex, setCategoryIndex] = useState(0)
+    const {colors} = useTheme();
+    const [CategoryIndex, setCategoryIndex] = useState(0);
+    const {onLogout, authState} = useAuth();
+    const logout = async () => {
+        await onLogout();
+        console.log(authState, "Logged out");
+    }
     return (
         <ScrollView>
-            <SafeAreaView style={{paddingVertical: 24,gap:24}}>
+            <SafeAreaView style={{paddingVertical: 1,gap:20}}>
                 {/* Header section*/}
                 <View style={{
                     paddingHorizontal: 24,
@@ -52,7 +58,7 @@ const HomeScreen = () => {
                         borderWidth:1,
                         borderColor:colors.border,
                 }}>
-                    <Icons name="notifications" size={24} color={colors.text}/>
+                    <Icons name="notifications" size={24} color={colors.text} onPress={logout} />
                     </TouchableOpacity>
                 </View>
             {/* Search Bar section*/}

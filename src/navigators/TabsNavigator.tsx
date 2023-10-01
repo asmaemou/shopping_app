@@ -18,7 +18,7 @@ const TabsNavigator = () => {
     return (
       <TabsStack.Navigator
         screenOptions={{
-            tabBarShowLabel:false,
+            tabBarShowLabel:true,
         }}
       >
         <TabsStack.Screen 
@@ -28,6 +28,7 @@ const TabsNavigator = () => {
             tabBarIcon(props){
                 return <Icons name="home" {...props}/>
             },
+            title: "Homed"
         }}/>
         <TabsStack.Screen 
         name="Cart" 
