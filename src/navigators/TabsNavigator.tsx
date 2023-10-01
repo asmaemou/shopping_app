@@ -1,8 +1,9 @@
-import { View, Text } from 'react-native'
+import { View, Text, Button } from 'react-native'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import Icons from "@expo/vector-icons/MaterialIcons"
+import Cart from '../screens/Cart';
 
 
 export type TabsStackParamList={
@@ -18,7 +19,7 @@ const TabsNavigator = () => {
     return (
       <TabsStack.Navigator
         screenOptions={{
-            tabBarShowLabel:false,
+            tabBarShowLabel:true,
         }}
       >
         <TabsStack.Screen 
@@ -28,10 +29,17 @@ const TabsNavigator = () => {
             tabBarIcon(props){
                 return <Icons name="home" {...props}/>
             },
+            headerRight: () => (
+                <Button
+                  onPress={() => alert('This is a button!')}
+                  title="logout"
+                  color="#00cc00"
+                />
+              )
         }}/>
         <TabsStack.Screen 
         name="Cart" 
-        component={HomeScreen} 
+        component={Cart} 
         options={{
             tabBarIcon(props){
                 return <Icons name="shopping-cart" {...props}/>
