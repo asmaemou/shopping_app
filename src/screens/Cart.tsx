@@ -6,14 +6,14 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const data = [
   {
     id: 1,
-    image: require("./images/orange.jpg"),
+    image: require("../assets/images/photo1.jpg"),
     name: "Orange",
     price: 10,
     amountTaken: 7,
   },
   {
     id: 2,
-    image: require("./images/tomato.jpg"),
+    image: require("../assets/images/photo1.jpg"),
     name: "Tomato",
     price: 5,
     amountTaken: 6,
