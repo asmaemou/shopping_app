@@ -401,6 +401,8 @@ const CartScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                   </Text>
                 </View>
                 <View>
+                <TouchableOpacity onPress={()=>navigation.navigate("Login")}>
+
                   <Text
                     style={{
                       fontSize: 14,
@@ -419,6 +421,7 @@ const CartScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     }}>
                     ****-9092
                   </Text>
+                </TouchableOpacity>
                 </View>
               </View>
               <MaterialCommunityIcons
