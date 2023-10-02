@@ -17,8 +17,8 @@ export default function SignUpScreen() {
   return (
     <View
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      // keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <SafeAreaView style={{ flex: 0, backgroundColor: themeColors.bg }} />
       <SafeAreaView style={{ flex: 1 }}>
@@ -90,11 +90,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   image: {
+    marginTop: -20,
     width: 165,
     height: 110,
   },
   formContainer: {
-    flex: 1,
+    // flex: 1,
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     backgroundColor: 'white',
@@ -131,7 +132,6 @@ const styles = StyleSheet.create({
     color: 'gray',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginVertical: 10,
   },
   socialButtons: {
     flexDirection: 'row',
@@ -151,11 +151,12 @@ const styles = StyleSheet.create({
   loginContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 10,
+    // marginTop: 10,
   },
   loginText: {
     color: 'gray',
     fontWeight: 'bold',
+    marginBottom: 20,
   },
   loginLink: {
     color: 'purple',
