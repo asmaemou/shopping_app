@@ -8,6 +8,14 @@ interface AuthProps {
     onLogin?: (email: string, password: string) => Promise<any>;
     onLogout?: () => Promise<any>;
 }
+//create user interface 
+
+interface User {
+    fullName:string;
+    email:string;
+    password:string;
+    confirmPassword:string;
+}
 
 const TOKEN_KEY= 'my-jwt'
 export const API_URL='https://api.developbetterapps.com'

@@ -47,8 +47,8 @@ export default function LoginScreen() {
     <View style={styles.container}>
       <SafeAreaView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+        // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        // keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
       >
         <View style={styles.imageContainer}>
           <Image source={require('../assets/images/login.png')} style={styles.image} />

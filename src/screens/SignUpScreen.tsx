@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { themeColors } from '../constants/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useAuth } from '../../app/context/AuthContext';
 
 type RootStackParamList = {
   Login: undefined;
@@ -13,14 +14,25 @@ type NavigationProps = StackNavigationProp<RootStackParamList, 'Login'>;
 
 export default function SignUpScreen() {
   const navigation = useNavigation<NavigationProps>();
+  const [fullName, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmEmail] = useState('');
+  const { onRegister, authState } = useAuth();
 
+  const SignUp = async () => {
+    const result = await onRegister(fullName,email,password,confirmPassword);
+    if (result && result.error) {
+      alert(result.msg);
+    }
+  };
   return (
     <View
       style={styles.container}
       // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       // keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
-      <SafeAreaView style={{ flex: 0, backgroundColor: themeColors.bg }} />
+
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.header}>
           {/* Add any header content here */}
@@ -31,34 +43,38 @@ export default function SignUpScreen() {
             style={styles.image}
           />
         </View>
-      </SafeAreaView>
+     
       <View style={styles.formContainer}>
         <View style={styles.form}>
           <Text style={styles.label}>Full Name</Text>
           <TextInput
             style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
-            value="john snow"
             placeholder="Enter Name"
+            onChangeText={(text) => setName(text)}
+            value={fullName}
           />
           <Text style={styles.label}>Email Address</Text>
           <TextInput
             style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
-            value="john@gmail.com"
-            placeholder="Enter Email"
+            placeholder="Enter your email"
+            onChangeText={(text) => setEmail(text)}
+            value={email}
           />
           <Text style={styles.label}>Password</Text>
           <TextInput
             style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
             secureTextEntry
-            value="test12345"
-            placeholder="Enter Password"
+            placeholder="Enter your password"
+            onChangeText={(text) => setPassword(text)}
+            value={password}
           />
           <Text style={styles.label}>Confirm Password</Text>
           <TextInput
             style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
             secureTextEntry
-            value="test12345"
-            placeholder="Enter Password"
+            placeholder="Enter your password"
+            onChangeText={(text) => setConfirmEmail(text)}
+            value={confirmPassword}
           />
           <TouchableOpacity style={styles.signupButton}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
@@ -72,6 +88,7 @@ export default function SignUpScreen() {
           </TouchableOpacity>
         </View>
       </View>
+      </SafeAreaView>
     </View>
   );
 }
@@ -94,7 +111,7 @@ const styles = StyleSheet.create({
     height: 110,
   },
   formContainer: {
-    // flex: 1,
+    flex: 1,
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     backgroundColor: 'white',
