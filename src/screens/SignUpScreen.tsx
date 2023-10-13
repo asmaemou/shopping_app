@@ -4,7 +4,7 @@ import { themeColors } from '../constants/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 type RootStackParamList = {
   Login: undefined;
 };
@@ -15,10 +15,9 @@ export default function SignUpScreen() {
   const navigation = useNavigation<NavigationProps>();
 
   return (
+  <KeyboardAwareScrollView >
     <View
       style={styles.container}
-      // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      // keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <SafeAreaView style={{ flex: 0, backgroundColor: themeColors.bg }} />
       <SafeAreaView style={{ flex: 1 }}>
@@ -73,6 +72,7 @@ export default function SignUpScreen() {
         </View>
       </View>
     </View>
+   </KeyboardAwareScrollView>
   );
 }
 

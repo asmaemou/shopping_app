@@ -14,6 +14,8 @@ import { themeColors } from '../constants/theme';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../app/context/AuthContext';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { ScrollView } from 'react-native-gesture-handler';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 type RootStackParamList = {
   SignUp: undefined;
@@ -44,18 +46,25 @@ export default function LoginScreen() {
   };
 
   return (
+    <KeyboardAwareScrollView>
+
     <View style={styles.container}>
+      
       <SafeAreaView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
       >
+        
         <View style={styles.imageContainer}>
           <Image source={require('../assets/images/login.png')} style={styles.image} />
         </View>
         <View style={styles.formContainer}>
           <View style={styles.form}>
-          <Text style={styles.label}>Email Address</Text>
+        <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+      >
+        <ScrollView showsHorizontalScrollIndicator={false}>
+        <Text style={styles.label}>Email Address</Text>
             <TextInput
               style={[styles.input, { paddingVertical: 10, fontSize: 15 }]} // Adjust paddingVertical and fontSize as needed
               placeholder="Enter your email"
@@ -69,14 +78,13 @@ export default function LoginScreen() {
               placeholder="Enter your password"
               onChangeText={(text) => setPassword(text)}
               value={password}
-            />
+              />
             <TouchableOpacity style={styles.forgotPassword}>
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.loginButton} onPress={login}>
               <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>
-          </View>
           <Text style={styles.orText}>Or</Text>
           <View style={styles.signUpContainer}>
             <Text style={styles.signUpText}>Don't have an account?</Text>
@@ -84,9 +92,15 @@ export default function LoginScreen() {
               <Text style={styles.signUpLink}> Sign Up</Text>
             </TouchableOpacity>
           </View>
+        </ScrollView>
+          
+              </KeyboardAvoidingView>
+          </View>
         </View>
+
       </SafeAreaView>
     </View>
+    </KeyboardAwareScrollView>
   );
 }
 
