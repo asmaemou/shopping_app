@@ -35,8 +35,7 @@ const MESONARY_LIST_DATA = [
   },
   {
     imageUrl:
-      "https://www.pexels.com/photo/black-man-with-hands-in-pockets-in-gray-t-shirt-6311139/",
-    title: "PUMA Everyday Hussle",
+    "https://images.pexels.com/photos/6311139/pexels-photo-6311139.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",    title: "PUMA Everyday Hussle",
     price: 180,
     category: "Shirts",
   },
@@ -48,7 +47,7 @@ const MESONARY_LIST_DATA = [
   },
   
   {
-    imageUrl: "https://www.pexels.com/photo/woman-in-yellow-winter-jacket-792325/",
+    imageUrl: "https://images.pexels.com/photos/375880/pexels-photo-375880.jpeg?cs=srgb&dl=pexels-clem-onojeghuo-375880.jpg&fm=jpg",
     title: "PUMA Everyday Hussle",
     price: 180,
     category: "Coat",
