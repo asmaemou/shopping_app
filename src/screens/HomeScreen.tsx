@@ -17,7 +17,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomBackdrop from "../components/CustomBackdrop";
 import FilterView from "../components/FilterView";
 import { TabsStackScreenProps } from "../navigators/TabsNavigator";
-import { useAuth } from "../../app/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const CATEGORIES = ["Shirts", "Shoes", "Skirt", "Coat"];
 

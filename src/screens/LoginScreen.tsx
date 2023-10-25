@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { themeColors } from '../constants/theme';
 import { useNavigation } from '@react-navigation/native';
-import { useAuth } from '../../app/context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type RootStackParamList = {

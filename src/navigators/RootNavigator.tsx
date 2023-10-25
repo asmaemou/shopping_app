@@ -5,7 +5,7 @@ import { NativeStackScreenProps, createNativeStackNavigator } from "@react-navig
 import HomeScreen from '../screens/HomeScreen';
 import DetailsScreen from '../screens/DetailsScreen';
 import TabsNavigator, { TabsStackParamList } from './TabsNavigator';
-import { useAuth, AuthProvider } from '../../app/context/AuthContext';
+import { useAuth, AuthProvider } from '../../context/AuthContext';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 

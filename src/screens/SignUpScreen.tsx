@@ -4,7 +4,7 @@ import { themeColors } from '../constants/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useAuth } from '../../app/context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 type RootStackParamList = {
   Login: undefined;
