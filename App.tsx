@@ -1,10 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import {DefaultTheme, NavigationContainer, Theme} from "@react-navigation/native";
 import RootNavigator from "./src/navigators/RootNavigator";
 import { useMemo } from 'react';
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider, useAuth } from './app/context/AuthContext';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import HomeScreen from './src/screens/HomeScreen';
+import LoginScreen from './src/screens/LoginScreen';
+import { TabsStackScreenProps } from './src/navigators/TabsNavigator';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const theme: Theme = useMemo(() => ({...DefaultTheme,colors:{
@@ -19,14 +28,25 @@ export default function App() {
 []
 );
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <AuthProvider>
+      <SafeAreaProvider> 
+      <GestureHandlerRootView style={styles.container}>
       <NavigationContainer theme={theme}>
-        <RootNavigator/>
+        <BottomSheetModalProvider>
+          <RootNavigator/>
+        </BottomSheetModalProvider>
         <StatusBar style="dark"/>
       </NavigationContainer>
     </GestureHandlerRootView>
+    </SafeAreaProvider>
+    </AuthProvider>
+    
+    
   );
 }
+
+
+
 
 const styles = StyleSheet.create({
   container: {
