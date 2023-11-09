@@ -68,7 +68,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   }, []);
 
   useEffect(() => {
-
+     fetchData(); 
     if (categoryIndex === 0) {
       setFilteredProducts(MESONARY_LIST_DATA);
     } else {
@@ -81,22 +81,27 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   }, [categoryIndex]);
 
 
-//  // Your fetchData function goes here
-//  const fetchData = async () => {
-//   try {
-//     const response = await axios.get('http://127.0.0.1:8000/products/');
-//     // Handle the response data here, for example, set it to a state variable
-//     console.log(response.data); // You can log the data to the console for testing
-//   } catch (error) {
-//     // Handle errors
-//     console.error(error);
-//   }
-// };
+ // Your fetchData function goes here
+ const fetchData = async () => {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/products/');
+    const imdata = response.data;
 
-// // Call fetchData when the component mounts
-// useEffect(() => {
-//   fetchData();
-// }, []);
+    const imageurl = imdata.product_picture;
+
+
+    // Handle the response data here, for example, set it to a state variable
+    console.log(response.data); // You can log the data to the console for testing
+  } catch (error) {
+    // Handle errors
+    console.error(error);
+  }
+};
+
+// Call fetchData when the component mounts
+useEffect(() => {
+  fetchData();
+}, []);
 
   return (
     <ScrollView>
