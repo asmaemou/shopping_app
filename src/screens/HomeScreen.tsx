@@ -25,41 +25,42 @@ const CATEGORIES = ["Shirts", "Shoes", "Skirt", "Coat"];
 const AVATAR_URL =
   "https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80";
 
-// Your product data with categories
-const MESONARY_LIST_DATA = [
-  {
-    imageUrl:
-      "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?cs=srgb&dl=pexels-pixabay-267301.jpg&fm=jpg",
-    title: "PUMA Everyday Hussle",
-    price: 160,
-    category: "Shoes",
-  },
-  {
-    imageUrl:
-    "https://images.pexels.com/photos/6311139/pexels-photo-6311139.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",    title: "PUMA Everyday Hussle",
-    price: 180,
-    category: "Shirts",
-  },
-  {
-    imageUrl: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=800",
-    title: "PUMA Everyday Hussle",
-    price: 180,
-    category: "Skirt",
-  },
-  
-  {
-    imageUrl: "https://images.pexels.com/photos/375880/pexels-photo-375880.jpeg?cs=srgb&dl=pexels-clem-onojeghuo-375880.jpg&fm=jpg",
-    title: "PUMA Everyday Hussle",
-    price: 180,
-    category: "Coat",
-  },
-  
-];
+// // Your product data with categories
+// const MESONARY_LIST_DATA = [
+//   {
+//     imageUrl:
+//       "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?cs=srgb&dl=pexels-pixabay-267301.jpg&fm=jpg",
+//     title: "PUMA Everyday Hussle",
+//     price: 160,
+//     category: "Shoes",
+//   },
+//   {
+//     imageUrl:
+//     "https://images.pexels.com/photos/6311139/pexels-photo-6311139.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",    title: "PUMA Everyday Hussle",
+//     price: 180,
+//     category: "Shirts",
+//   },
+//   {
+//     imageUrl: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=800",
+//     title: "PUMA Everyday Hussle",
+//     price: 180,
+//     category: "Skirt",
+//   },
+
+//   {
+//     imageUrl: "https://images.pexels.com/photos/375880/pexels-photo-375880.jpeg?cs=srgb&dl=pexels-clem-onojeghuo-375880.jpg&fm=jpg",
+//     title: "PUMA Everyday Hussle",
+//     price: 180,
+//     category: "Coat",
+//   },
+
+// ];
 
 const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { colors } = useTheme();
   const [categoryIndex, setCategoryIndex] = useState(0);
-  const [filteredProducts, setFilteredProducts] = useState(MESONARY_LIST_DATA);
+  const [categories, setCategories] = useState(["All"]);
+  const [products, setProducts] = useState([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { onLogout } = useAuth();
 
@@ -67,41 +68,47 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     bottomSheetModalRef.current?.present();
   }, []);
 
-  useEffect(() => {
-     fetchData(); 
-    if (categoryIndex === 0) {
-      setFilteredProducts(MESONARY_LIST_DATA);
-    } else {
-      const selectedCategory = CATEGORIES[categoryIndex - 1];
-      const filtered = MESONARY_LIST_DATA.filter(
-        (product) => product.category === selectedCategory
-      );
-      setFilteredProducts(filtered);
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/categories/");
+      const fetchedCategories = [
+        "All",
+        ...response.data.map((cat) => cat.name),
+      ];
+      setCategories(fetchedCategories);
+    } catch (error) {
+      console.error(error);
     }
-  }, [categoryIndex]);
+  };
 
+  const fetchProduct = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/products/");
+      const fetchedProducts = response.data.map((product) => ({
+        imageUrl: product.picture
+          ? `http://127.0.0.1:8000${product.picture}`
+          : undefined,
+        title: product.name,
+        price: product.price,
+        category: product.category.name,
+      }));
+      setProducts(fetchedProducts);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
- // Your fetchData function goes here
- const fetchData = async () => {
-  try {
-    const response = await axios.get('http://127.0.0.1:8000/products/');
-    const imdata = response.data;
+  useEffect(() => {
+    fetchCategories();
+    fetchProduct();
+  }, []);
 
-    const imageurl = imdata.product_picture;
-
-
-    // Handle the response data here, for example, set it to a state variable
-    console.log(response.data); // You can log the data to the console for testing
-  } catch (error) {
-    // Handle errors
-    console.error(error);
-  }
-};
-
-// Call fetchData when the component mounts
-useEffect(() => {
-  fetchData();
-}, []);
+  const filteredProducts =
+    categoryIndex === 0
+      ? products
+      : products.filter(
+          (product) => product.category === categories[categoryIndex]
+        );
 
   return (
     <ScrollView>
@@ -134,7 +141,10 @@ useEffect(() => {
             >
               Hi, Asmae 👋
             </Text>
-            <Text style={{ color: colors.text, opacity: 0.75 }} numberOfLines={1}>
+            <Text
+              style={{ color: colors.text, opacity: 0.75 }}
+              numberOfLines={1}
+            >
               Discover fashion that suits your style
             </Text>
           </View>
@@ -149,7 +159,12 @@ useEffect(() => {
               borderColor: colors.border,
             }}
           >
-            <Icons name="logout" size={24} color={colors.text} onPress={onLogout} />
+            <Icons
+              name="logout"
+              size={24}
+              color={colors.text}
+              onPress={onLogout}
+            />
           </TouchableOpacity>
         </View>
 
@@ -212,7 +227,9 @@ useEffect(() => {
               marginBottom: 12,
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: "700", color: colors.text }}>
+            <Text
+              style={{ fontSize: 20, fontWeight: "700", color: colors.text }}
+            >
               New Collections
             </Text>
             <TouchableOpacity>
@@ -254,7 +271,7 @@ useEffect(() => {
 
         {/* Categories Section */}
         <FlatList
-          data={["All", ...CATEGORIES]} // Include "All" as the first option
+          data={categories} // Use state categories for FlatList data
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
@@ -288,6 +305,7 @@ useEffect(() => {
               </TouchableOpacity>
             );
           }}
+          keyExtractor={(item, index) => index.toString()} // Add a keyExtractor for the list items
         />
 
         {/* Mesonary */}
