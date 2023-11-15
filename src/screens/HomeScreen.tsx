@@ -20,11 +20,17 @@ import { TabsStackScreenProps } from "../navigators/TabsNavigator";
 import { useAuth } from "../../app/context/AuthContext";
 
 const CATEGORIES = ["Shirts", "Shoes", "Skirt", "Coat"];
+const CATEGORY_MAP = {
+  1: "Shirts",
+  2: "Shoes",
+  3: "Skirt",
+  4: "Coat",
+};
+const CATEGORY_IDS = [1, 2, 3, 4]; // Define category IDs
+
 const API_URL = "http://10.126.110.98:8000";
 const AVATAR_URL =
   "https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80";
-
-
 
 const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { colors } = useTheme();
@@ -34,7 +40,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const [products, setProducts] = useState<Product[]>([]);
 
   interface Product {
-    category: string; 
+    category: number;
     description: string;
     stock: string;
     rating: string;
@@ -42,21 +48,19 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     amount: number;
     status: string;
     manufacturer: string;
-    picture: string; 
+    picture: string;
   }
 
   const openFilterModal = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
 
-
-
   const fetchProducts = async () => {
     try {
       const response = await fetch(`${API_URL}/products/`);
       const data = await response.json();
       setProducts(data); // Store the fetched data in the products state
-  
+
       // Log the entire array of products
       console.log("Fetched Products:", data);
     } catch (error) {
@@ -68,6 +72,14 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     fetchProducts();
   }, []);
 
+  // Function to filter products based on the selected category ID
+  let filteredProducts = products;
+  if (categoryIndex > 0) { // Check if a specific category is selected
+    
+    filteredProducts = products.filter(
+      (product) => product.category == categoryIndex
+    );
+  }
 
   return (
     <ScrollView>
@@ -266,9 +278,9 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
           }}
         />
 
-        {/* Mesonary */}
+        {/* Masonry */}
         <MasonryList
-          data={products} // Use the fetched data from your API
+          data={filteredProducts} // Use the fetched data from your API
           numColumns={2}
           contentContainerStyle={{ paddingHorizontal: 12 }}
           showsVerticalScrollIndicator={false}
