@@ -20,63 +20,54 @@ import { TabsStackScreenProps } from "../navigators/TabsNavigator";
 import { useAuth } from "../../app/context/AuthContext";
 
 const CATEGORIES = ["Shirts", "Shoes", "Skirt", "Coat"];
-
+const API_URL = "http://10.126.110.98:8000";
 const AVATAR_URL =
   "https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80";
 
-// Your product data with categories
-const MESONARY_LIST_DATA = [
-  {
-    imageUrl:
-      "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?cs=srgb&dl=pexels-pixabay-267301.jpg&fm=jpg",
-    title: "PUMA Everyday Hussle",
-    price: 160,
-    category: "Shoes",
-  },
-  {
-    imageUrl:
-    "https://images.pexels.com/photos/6311139/pexels-photo-6311139.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",    title: "PUMA Everyday Hussle",
-    price: 180,
-    category: "Shirts",
-  },
-  {
-    imageUrl: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=800",
-    title: "PUMA Everyday Hussle",
-    price: 180,
-    category: "Skirt",
-  },
-  
-  {
-    imageUrl: "https://images.pexels.com/photos/375880/pexels-photo-375880.jpeg?cs=srgb&dl=pexels-clem-onojeghuo-375880.jpg&fm=jpg",
-    title: "PUMA Everyday Hussle",
-    price: 180,
-    category: "Coat",
-  },
-  
-];
+
 
 const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { colors } = useTheme();
   const [categoryIndex, setCategoryIndex] = useState(0);
-  const [filteredProducts, setFilteredProducts] = useState(MESONARY_LIST_DATA);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { onLogout } = useAuth();
+  const [products, setProducts] = useState<Product[]>([]);
+
+  interface Product {
+    category: string; 
+    description: string;
+    stock: string;
+    rating: string;
+    name: string;
+    amount: number;
+    status: string;
+    manufacturer: string;
+    picture: string; 
+  }
 
   const openFilterModal = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
 
-  useEffect(() => {
-    if (categoryIndex === 0) {
-      setFilteredProducts(MESONARY_LIST_DATA);
-    } else {
-      const selectedCategory = CATEGORIES[categoryIndex - 1];
-      const filtered = MESONARY_LIST_DATA.filter(
-        (product) => product.category === selectedCategory
-      );
-      setFilteredProducts(filtered);
+
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`${API_URL}/products/`);
+      const data = await response.json();
+      setProducts(data); // Store the fetched data in the products state
+  
+      // Log the entire array of products
+      console.log("Fetched Products:", data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
     }
-  }, [categoryIndex]);
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
 
   return (
     <ScrollView>
@@ -109,7 +100,10 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             >
               Hi, Asmae 👋
             </Text>
-            <Text style={{ color: colors.text, opacity: 0.75 }} numberOfLines={1}>
+            <Text
+              style={{ color: colors.text, opacity: 0.75 }}
+              numberOfLines={1}
+            >
               Discover fashion that suits your style
             </Text>
           </View>
@@ -124,7 +118,12 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               borderColor: colors.border,
             }}
           >
-            <Icons name="logout" size={24} color={colors.text} onPress={onLogout} />
+            <Icons
+              name="logout"
+              size={24}
+              color={colors.text}
+              onPress={onLogout}
+            />
           </TouchableOpacity>
         </View>
 
@@ -187,7 +186,9 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               marginBottom: 12,
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: "700", color: colors.text }}>
+            <Text
+              style={{ fontSize: 20, fontWeight: "700", color: colors.text }}
+            >
               New Collections
             </Text>
             <TouchableOpacity>
@@ -267,108 +268,113 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
         {/* Mesonary */}
         <MasonryList
-          data={filteredProducts}
+          data={products} // Use the fetched data from your API
           numColumns={2}
           contentContainerStyle={{ paddingHorizontal: 12 }}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item, i }: any) => (
-            <View style={{ padding: 6 }}>
-              <View
-                style={{
-                  aspectRatio: i === 0 ? 1 : 2 / 3,
-                  position: "relative",
-                  overflow: "hidden",
-                  borderRadius: 24,
-                }}
-              >
-                <Image
-                  source={{
-                    uri: item.imageUrl,
-                  }}
-                  resizeMode="cover"
-                  style={StyleSheet.absoluteFill}
-                />
+          renderItem={({ item }) => {
+            const product = item as Product;
+            return (
+              <View style={{ padding: 6 }}>
                 <View
-                  style={[
-                    StyleSheet.absoluteFill,
-                    {
-                      padding: 12,
-                    },
-                  ]}
+                  style={{
+                    aspectRatio: 1,
+                    position: "relative",
+                    overflow: "hidden",
+                    borderRadius: 24,
+                  }}
                 >
-                  <View style={{ flexDirection: "row", gap: 8, padding: 4 }}>
-                    <Text
-                      style={{
-                        flex: 1,
-                        fontSize: 16,
-                        fontWeight: "600",
-                        color: "#fff",
-                        textShadowColor: "rgba(0,0,0,0.2)",
-                        textShadowOffset: {
-                          height: 1,
-                          width: 0,
-                        },
-                        textShadowRadius: 4,
-                      }}
-                    >
-                      {item.title}
-                    </Text>
-                    <View
-                      style={{
-                        backgroundColor: colors.card,
-                        borderRadius: 100,
-                        height: 32,
-                        aspectRatio: 1,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Icons
-                        name="favorite-border"
-                        size={20}
-                        color={colors.text}
-                      />
-                    </View>
-                  </View>
-                  <View style={{ flex: 1 }} />
-                  <BlurView
-                    style={{
-                      flexDirection: "row",
-                      backgroundColor: "rgba(0,0,0,0.5)",
-                      alignItems: "center",
-                      padding: 6,
-                      borderRadius: 100,
-                      overflow: "hidden",
-                    }}
-                    intensity={20}
+                  <Image
+                    source={{ uri: product.picture }}
+                    resizeMode="cover"
+                    style={StyleSheet.absoluteFill}
+                  />
+                  <View
+                    style={[
+                      StyleSheet.absoluteFill,
+                      {
+                        padding: 12,
+                      },
+                    ]}
                   >
-                    <Text
+                    <View style={{ flexDirection: "row", gap: 8, padding: 4 }}>
+                      <Text
+                        style={{
+                          flex: 1,
+                          fontSize: 16,
+                          fontWeight: "600",
+                          color: "#fff",
+                          textShadowColor: "rgba(0,0,0,0.2)",
+                          textShadowOffset: {
+                            height: 1,
+                            width: 0,
+                          },
+                          textShadowRadius: 4,
+                        }}
+                      >
+                        {product.description}
+                      </Text>
+                      <View
+                        style={{
+                          backgroundColor: colors.card,
+                          borderRadius: 100,
+                          height: 32,
+                          aspectRatio: 1,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Icons
+                          name="favorite-border"
+                          size={20}
+                          color={colors.text}
+                        />
+                      </View>
+                    </View>
+                    <View style={{ flex: 1 }} />
+                    <BlurView
                       style={{
-                        flex: 1,
-                        fontSize: 16,
-                        fontWeight: "600",
-                        color: "#fff",
-                        marginLeft: 8,
-                      }}
-                      numberOfLines={1}
-                    >
-                      ${item.price}
-                    </Text>
-                    <TouchableOpacity
-                      style={{
-                        paddingHorizontal: 12,
-                        paddingVertical: 8,
+                        flexDirection: "row",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        alignItems: "center",
+                        padding: 6,
                         borderRadius: 100,
-                        backgroundColor: "#fff",
+                        overflow: "hidden",
                       }}
+                      intensity={20}
                     >
-                      <Icons name="add-shopping-cart" size={18} color="#000" />
-                    </TouchableOpacity>
-                  </BlurView>
+                      <Text
+                        style={{
+                          flex: 1,
+                          fontSize: 16,
+                          fontWeight: "600",
+                          color: "#fff",
+                          marginLeft: 8,
+                        }}
+                        numberOfLines={1}
+                      >
+                        ${product.amount}
+                      </Text>
+                      <TouchableOpacity
+                        style={{
+                          paddingHorizontal: 12,
+                          paddingVertical: 8,
+                          borderRadius: 100,
+                          backgroundColor: "#fff",
+                        }}
+                      >
+                        <Icons
+                          name="add-shopping-cart"
+                          size={18}
+                          color="#000"
+                        />
+                      </TouchableOpacity>
+                    </BlurView>
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
+            );
+          }}
           onEndReachedThreshold={0.1}
         />
       </SafeAreaView>
