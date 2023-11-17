@@ -38,6 +38,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { onLogout } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
+  const [newCollections, setNewCollections] = useState<Product[]>([]);
 
   interface Product {
     category: number;
@@ -68,8 +69,19 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     }
   };
 
+  const fetchNewCollections = async () => {
+    try {
+      const response = await fetch(`${API_URL}/newcollections/`); 
+      const data = await response.json();
+      setNewCollections(data);
+    } catch (error) {
+      console.error("Error fetching new collections:", error);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchNewCollections();
   }, []);
 
   // Function to filter products based on the selected category ID
@@ -139,6 +151,41 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
           </TouchableOpacity>
         </View>
 
+
+        {/* Grid Collection View */}
+        <View style={{ paddingHorizontal: 24 }}>
+          {/* Title bar */}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 12,
+            }}
+          >
+            <Text
+              style={{ fontSize: 20, fontWeight: "700", color: colors.text }}
+            >
+              New Collections
+            </Text>
+            <TouchableOpacity>
+              {/* <Text style={{ color: colors.primary }}>See All</Text> */}
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: "row", height: 200, gap: 12 }}>
+            {newCollections.map((collection) => (
+              <Card
+                key={collection.name} // Use an appropriate unique key
+                onPress={() => {
+                  navigation.navigate("Details", { id: collection.id }); // Adjust as needed
+                }}
+                price={collection.amount}
+                imageUrl={collection.picture}
+              />
+            ))}
+          </View>
+        </View>
+
         {/* Search Bar Section */}
         <View style={{ flexDirection: "row", paddingHorizontal: 24, gap: 12 }}>
           <TouchableOpacity
@@ -171,8 +218,8 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               Search
             </Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
+          {/* Filter button */}
+          {/* <TouchableOpacity
             onPress={openFilterModal}
             style={{
               width: 52,
@@ -184,61 +231,9 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             }}
           >
             <Icons name="tune" size={24} color={colors.background} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
-        {/* Grid Collection View */}
-        <View style={{ paddingHorizontal: 24 }}>
-          {/* Title bar */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 12,
-            }}
-          >
-            <Text
-              style={{ fontSize: 20, fontWeight: "700", color: colors.text }}
-            >
-              New Collections
-            </Text>
-            <TouchableOpacity>
-              <Text style={{ color: colors.primary }}>See All</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: "row", height: 200, gap: 12 }}>
-            <Card
-              onPress={() => {
-                navigation.navigate("Details", {
-                  id: "123",
-                });
-              }}
-              price={130}
-              imageUrl="https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80"
-            />
-            <View style={{ flex: 1, gap: 12 }}>
-              <Card
-                onPress={() => {
-                  navigation.navigate("Details", {
-                    id: "456",
-                  });
-                }}
-                price={120}
-                imageUrl="https://images.unsplash.com/photo-1571945153237-4929e783af4a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80"
-              />
-              <Card
-                onPress={() => {
-                  navigation.navigate("Details", {
-                    id: "789",
-                  });
-                }}
-                price={170}
-                imageUrl="https://images.unsplash.com/photo-1485218126466-34e6392ec754?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2342&q=80"
-              />
-            </View>
-          </View>
-        </View>
 
         {/* Categories Section */}
         <FlatList
