@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import Carousel from 'react-native-snap-carousel';
+import { Dimensions,TextInput } from 'react-native';
+
 import {
   View,
   Text,
@@ -27,6 +30,7 @@ const CATEGORY_MAP = {
   4: "Coat",
 };
 const CATEGORY_IDS = [1, 2, 3, 4]; // Define category IDs
+const screenWidth = Dimensions.get('window').width;
 
 const API_URL = "http://10.126.110.98:8000";
 const AVATAR_URL =
@@ -39,6 +43,8 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { onLogout } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [newCollections, setNewCollections] = useState<Product[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
 
   interface Product {
     category: number;
@@ -79,6 +85,11 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     }
   };
 
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+  };
+  
+
   useEffect(() => {
     fetchProducts();
     fetchNewCollections();
@@ -92,6 +103,26 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
       (product) => product.category == categoryIndex
     );
   }
+
+  if (searchQuery !== '') {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
+
+  const renderCarouselItem = ({ item, index }) => {
+    return (
+      <Card
+        key={index}
+        price={item.amount}
+        imageUrl={item.picture}
+        onPress={() => {
+          navigation.navigate("Details", { id: item.id });
+        }}
+      />
+    );
+  };
+
 
   return (
     <ScrollView>
@@ -168,6 +199,14 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             >
               New Collections
             </Text>
+            <Carousel
+          data={newCollections}
+          renderItem={renderCarouselItem}
+          sliderWidth={screenWidth} 
+          itemWidth={screenWidth-60} 
+          layout={'default'}
+          containerCustomStyle={{ flexGrow: 0 }}
+        />
             <TouchableOpacity>
               {/* <Text style={{ color: colors.primary }}>See All</Text> */}
             </TouchableOpacity>
@@ -187,52 +226,39 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
         </View>
 
         {/* Search Bar Section */}
-        <View style={{ flexDirection: "row", paddingHorizontal: 24, gap: 12 }}>
-          <TouchableOpacity
-            style={{
-              flex: 1,
-              height: 52,
-              borderRadius: 52,
-              borderWidth: 1,
-              borderColor: colors.border,
-              alignItems: "center",
-              paddingHorizontal: 24,
-              flexDirection: "row",
-              gap: 12,
-            }}
-          >
-            <Icons
-              name="search"
-              size={24}
-              color={colors.text}
-              style={{ opacity: 0.5 }}
-            />
-            <Text
-              style={{
-                flex: 1,
-                fontSize: 16,
-                color: colors.text,
-                opacity: 0.5,
-              }}
-            >
-              Search
-            </Text>
-          </TouchableOpacity>
-          {/* Filter button */}
-          {/* <TouchableOpacity
-            onPress={openFilterModal}
-            style={{
-              width: 52,
-              aspectRatio: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 52,
-              backgroundColor: colors.primary,
-            }}
-          >
-            <Icons name="tune" size={24} color={colors.background} />
-          </TouchableOpacity> */}
-        </View>
+<View style={{ flexDirection: "row", paddingHorizontal: 24, gap: 12 }}>
+  <TextInput
+    style={{
+      flex: 1,
+      height: 52,
+      borderRadius: 52,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      paddingHorizontal: 24,
+      flexDirection: "row",
+      gap: 12,
+    }}
+    placeholder="Search"
+    value={searchQuery}
+    onChangeText={handleSearchChange}
+  />
+  <TouchableOpacity
+  onPress={openFilterModal}
+  style={{
+    width: 52,
+    height: 52,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 52,
+    marginLeft: 12, // Added to create some space between search bar and filter button
+    backgroundColor: colors.primary, // Use the primary color from your theme
+  }}
+>
+  <Icons name="tune" size={24} color={colors.background} />
+</TouchableOpacity>
+</View>
+
 
 
         {/* Categories Section */}
