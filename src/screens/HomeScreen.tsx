@@ -345,7 +345,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                           textShadowRadius: 4,
                         }}
                       >
-                        {product.description}
+                        {product.name}
                       </Text>
                       <View
                         style={{
