@@ -21,6 +21,7 @@ import CustomBackdrop from "../components/CustomBackdrop";
 import FilterView from "../components/FilterView";
 import { TabsStackScreenProps } from "../navigators/TabsNavigator";
 import { useAuth } from "../../app/context/AuthContext";
+import { useShoppingCart } from "../../app/context/ShoppingCartContext";
 
 const CATEGORIES = ["Shirts", "Shoes", "Skirt", "Coat"];
 const CATEGORY_MAP = {
@@ -216,7 +217,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               <Card
                 key={collection.name} // Use an appropriate unique key
                 onPress={() => {
-                  navigation.navigate("Details", { id: collection.id }); // Adjust as needed
+                  navigation.navigate("Details", { id: collection }); // Adjust as needed
                 }}
                 price={collection.amount}
                 imageUrl={collection.picture}

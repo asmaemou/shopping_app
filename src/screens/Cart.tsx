@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, FlatList, Image } from "react-native";
 import React from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useShoppingCart } from "../../app/context/ShoppingCartContext";
 
 const data = [
   {
@@ -21,73 +22,83 @@ const data = [
 ];
 
 const Cart = ({ navigation }) => {
+  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useShoppingCart();
   const renderItem = ({ item, index }: { item: any; index: number }) => {
-    const {
-      itemContainerStyle,
-      lastItemStyle,
-      imageStyle,
-      textStyle,
-      counterStyle,
-      priceStyle,
-    } = styles;
+    const { itemContainerStyle, lastItemStyle, imageStyle, textStyle, counterStyle, priceStyle } =
+      styles;
 
     return (
-      <View
-        style={index + 1 === data.length ? lastItemStyle : itemContainerStyle}
-      >
+      <View style={index + 1 === data.length ? lastItemStyle : itemContainerStyle}>
         <Image source={item.image} style={imageStyle} />
 
         <View style={textStyle}>
           <Text style={{ color: "#2e2f30" }}>{item.name}</Text>
           <View style={priceStyle}>
-            <Text style={{ color: "#2e2f30", fontSize: 12 }}>
-              ${item.price}
-            </Text>
+            <Text style={{ color: "#2e2f30", fontSize: 12 }}>${item.price * item.quantity}</Text>
           </View>
         </View>
 
         <View style={counterStyle}>
-          <Icon.Button
-            name="ios-remove"
-            size={15}
-            color="#fff"
-            backgroundColor="#fff"
+          <TouchableOpacity
+            onPress={() => decreaseQuantity(item)}
             style={{
-              borderRadius: 15,
-              backgroundColor: "#bbb",
-              height: 30,
-              width: 30,
+              width: 34,
+              aspectRatio: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 34,
             }}
-            iconStyle={{ marginRight: 0 }}
-          />
-
-          <Text>{item.amountTaken}</Text>
-
-          <Icon.Button
-            name="ios-add"
-            size={15}
-            color="#fff"
-            backgroundColor="#fff"
+          >
+            <Icon.Button
+              name="ios-remove"
+              size={15}
+              color="#fff"
+              backgroundColor="#fff"
+              style={{
+                borderRadius: 15,
+                backgroundColor: "#bbb",
+                height: 30,
+                width: 30,
+              }}
+              iconStyle={{ marginRight: 0 }}
+            />
+          </TouchableOpacity>
+          <Text>{item.quantity}</Text>
+          <TouchableOpacity
+            onPress={() => increaseQuantity(item)}
             style={{
-              borderRadius: 15,
-              backgroundColor: "#bbb",
-              height: 30,
-              width: 30,
+              width: 34,
+              aspectRatio: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 34,
             }}
-            iconStyle={{ marginRight: 0 }}
-          />
+          >
+            <Icon.Button
+              name="ios-add"
+              size={15}
+              color="#fff"
+              backgroundColor="#fff"
+              style={{
+                borderRadius: 15,
+                backgroundColor: "#bbb",
+                height: 30,
+                width: 30,
+              }}
+              iconStyle={{ marginRight: 0 }}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     );
   };
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.headerStyle}>
-      </View>
+      <View style={styles.headerStyle}></View>
       {/* <ItemsContainer /> */}
       <View style={styles.itemsContainerStyle}>
         <FlatList
-          data={data}
+          data={cart.items}
           renderItem={renderItem}
           keyExtractor={(item) => item.id.toString()} // Added toString() to ensure a string key
         />
@@ -97,18 +108,26 @@ const Cart = ({ navigation }) => {
         <View style={styles.totalContainerStyle}>
           <View style={styles.goodsStyle}>
             <Icon name="ios-cart" size={20} style={{ marginRight: 8 }} />
-            <Text>8 goods</Text>
+            <Text>{`${cart.items.length} product`}</Text>
           </View>
 
           <View style={styles.totalStyle}>
             <Text>Total - </Text>
-            <Text>$300</Text>
+            <Text>
+              {
+              `$ ${cart.items.reduce((total, product) => {
+                return total + product.price * product.quantity;
+              }, 0)}`
+              }
+            </Text>
           </View>
         </View>
         <View style={styles.buttonContainerStyle}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <View style={styles.closeButtonStyle}>
             <Text style={{ color: "#fff" }}>Close</Text>
           </View>
+        </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Payment")}>
             <View style={styles.checkoutButtonStyle}>
               <Text style={{ color: "#fff" }}>Go to checkout</Text>
@@ -144,7 +163,7 @@ const styles = StyleSheet.create({
   },
   itemsContainerStyle: {
     flex: 4,
-    backgroundColor: '#DCDCDC',
+    backgroundColor: "#DCDCDC",
   },
   lastItemStyle: {
     flexDirection: "row",
