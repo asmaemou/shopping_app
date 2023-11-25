@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import Carousel from 'react-native-snap-carousel';
+import { Dimensions,TextInput } from 'react-native';
+
 import {
   View,
   Text,
@@ -21,64 +24,106 @@ import { useAuth } from "../../app/context/AuthContext";
 import { useShoppingCart } from "../../app/context/ShoppingCartContext";
 
 const CATEGORIES = ["Shirts", "Shoes", "Skirt", "Coat"];
+const CATEGORY_MAP = {
+  1: "Shirts",
+  2: "Shoes",
+  3: "Skirt",
+  4: "Coat",
+};
+const CATEGORY_IDS = [1, 2, 3, 4]; // Define category IDs
+const screenWidth = Dimensions.get('window').width;
 
+const API_URL = "http://10.126.110.98:8000";
 const AVATAR_URL =
   "https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80";
-
-// Your product data with categories
-const MESONARY_LIST_DATA = [
-  {
-    imageUrl:
-      "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?cs=srgb&dl=pexels-pixabay-267301.jpg&fm=jpg",
-    title: "PUMA Everyday Hussle",
-    price: 160,
-    category: "Shoes",
-  },
-  {
-    imageUrl:
-    "https://images.pexels.com/photos/6311139/pexels-photo-6311139.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",    title: "PUMA Everyday Hussle",
-    price: 180,
-    category: "Shirts",
-  },
-  {
-    imageUrl: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=800",
-    title: "PUMA Everyday Hussle",
-    price: 180,
-    category: "Skirt",
-  },
-  
-  {
-    imageUrl: "https://images.pexels.com/photos/375880/pexels-photo-375880.jpeg?cs=srgb&dl=pexels-clem-onojeghuo-375880.jpg&fm=jpg",
-    title: "PUMA Everyday Hussle",
-    price: 180,
-    category: "Coat",
-  },
-  
-];
 
 const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { colors } = useTheme();
   const [categoryIndex, setCategoryIndex] = useState(0);
-  const [filteredProducts, setFilteredProducts] = useState(MESONARY_LIST_DATA);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { onLogout } = useAuth();
-  const  {addToCart} = useShoppingCart()
+  const [products, setProducts] = useState<Product[]>([]);
+  const [newCollections, setNewCollections] = useState<Product[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+
+  interface Product {
+    category: number;
+    description: string;
+    stock: string;
+    rating: string;
+    name: string;
+    amount: number;
+    status: string;
+    manufacturer: string;
+    picture: string;
+  }
 
   const openFilterModal = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
 
-  useEffect(() => {
-    if (categoryIndex === 0) {
-      setFilteredProducts(MESONARY_LIST_DATA);
-    } else {
-      const selectedCategory = CATEGORIES[categoryIndex - 1];
-      const filtered = MESONARY_LIST_DATA.filter(
-        (product) => product.category === selectedCategory
-      );
-      setFilteredProducts(filtered);
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`${API_URL}/products/`);
+      const data = await response.json();
+      setProducts(data); // Store the fetched data in the products state
+
+      // Log the entire array of products
+      console.log("Fetched Products:", data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
     }
-  }, [categoryIndex]);
+  };
+
+  const fetchNewCollections = async () => {
+    try {
+      const response = await fetch(`${API_URL}/newcollections/`); 
+      const data = await response.json();
+      setNewCollections(data);
+    } catch (error) {
+      console.error("Error fetching new collections:", error);
+    }
+  };
+
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+  };
+  
+
+  useEffect(() => {
+    fetchProducts();
+    fetchNewCollections();
+  }, []);
+
+  // Function to filter products based on the selected category ID
+  let filteredProducts = products;
+  if (categoryIndex > 0) { // Check if a specific category is selected
+    
+    filteredProducts = products.filter(
+      (product) => product.category == categoryIndex
+    );
+  }
+
+  if (searchQuery !== '') {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
+
+  const renderCarouselItem = ({ item, index }) => {
+    return (
+      <Card
+        key={index}
+        price={item.amount}
+        imageUrl={item.picture}
+        onPress={() => {
+          navigation.navigate("Details", { id: item.id });
+        }}
+      />
+    );
+  };
+
 
   return (
     <ScrollView>
@@ -111,7 +156,10 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             >
               Hi, Asmae 👋
             </Text>
-            <Text style={{ color: colors.text, opacity: 0.75 }} numberOfLines={1}>
+            <Text
+              style={{ color: colors.text, opacity: 0.75 }}
+              numberOfLines={1}
+            >
               Discover fashion that suits your style
             </Text>
           </View>
@@ -126,57 +174,15 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               borderColor: colors.border,
             }}
           >
-            <Icons name="logout" size={24} color={colors.text} onPress={onLogout} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Search Bar Section */}
-        <View style={{ flexDirection: "row", paddingHorizontal: 24, gap: 12 }}>
-          <TouchableOpacity
-            style={{
-              flex: 1,
-              height: 52,
-              borderRadius: 52,
-              borderWidth: 1,
-              borderColor: colors.border,
-              alignItems: "center",
-              paddingHorizontal: 24,
-              flexDirection: "row",
-              gap: 12,
-            }}
-          >
             <Icons
-              name="search"
+              name="logout"
               size={24}
               color={colors.text}
-              style={{ opacity: 0.5 }}
+              onPress={onLogout}
             />
-            <Text
-              style={{
-                flex: 1,
-                fontSize: 16,
-                color: colors.text,
-                opacity: 0.5,
-              }}
-            >
-              Search
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={openFilterModal}
-            style={{
-              width: 52,
-              aspectRatio: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 52,
-              backgroundColor: colors.primary,
-            }}
-          >
-            <Icons name="tune" size={24} color={colors.background} />
           </TouchableOpacity>
         </View>
+
 
         {/* Grid Collection View */}
         <View style={{ paddingHorizontal: 24 }}>
@@ -189,46 +195,72 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               marginBottom: 12,
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: "700", color: colors.text }}>
+            <Text
+              style={{ fontSize: 20, fontWeight: "700", color: colors.text }}
+            >
               New Collections
             </Text>
+            <Carousel
+          data={newCollections}
+          renderItem={renderCarouselItem}
+          sliderWidth={screenWidth} 
+          itemWidth={screenWidth-60} 
+          layout={'default'}
+          containerCustomStyle={{ flexGrow: 0 }}
+        />
             <TouchableOpacity>
-              <Text style={{ color: colors.primary }}>See All</Text>
+              {/* <Text style={{ color: colors.primary }}>See All</Text> */}
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: "row", height: 200, gap: 12 }}>
-            <Card
-              onPress={() => {
-                navigation.navigate("Details", {
-                  //pass the product details here as params for the details route.
-                  id: "123",
-                });
-              }}
-              price={131}
-              imageUrl="https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80"
-            />
-            <View style={{ flex: 1, gap: 12 }}>
+            {newCollections.map((collection) => (
               <Card
+                key={collection.name} // Use an appropriate unique key
                 onPress={() => {
-                  navigation.navigate("Details", {
-                    id: "456",
-                  });
+                  navigation.navigate("Details", { id: collection }); // Adjust as needed
                 }}
-                price={120}
-                imageUrl="https://images.unsplash.com/photo-1571945153237-4929e783af4a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80"
+                price={collection.amount}
+                imageUrl={collection.picture}
               />
-              <Card
-                onPress={() => {
-                  navigation.navigate("Details", {
-                    id: "789",
-                  });
-                }}
-                price={170}
-                imageUrl="https://images.unsplash.com/photo-1485218126466-34e6392ec754?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2342&q=80"
-              />
-            </View>
+            ))}
           </View>
         </View>
+
+        {/* Search Bar Section */}
+<View style={{ flexDirection: "row", paddingHorizontal: 24, gap: 12 }}>
+  <TextInput
+    style={{
+      flex: 1,
+      height: 52,
+      borderRadius: 52,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      paddingHorizontal: 24,
+      flexDirection: "row",
+      gap: 12,
+    }}
+    placeholder="Search"
+    value={searchQuery}
+    onChangeText={handleSearchChange}
+  />
+  <TouchableOpacity
+  onPress={openFilterModal}
+  style={{
+    width: 52,
+    height: 52,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 52,
+    marginLeft: 12, // Added to create some space between search bar and filter button
+    backgroundColor: colors.primary, // Use the primary color from your theme
+  }}
+>
+  <Icons name="tune" size={24} color={colors.background} />
+</TouchableOpacity>
+</View>
+
+
 
         {/* Categories Section */}
         <FlatList
@@ -268,110 +300,115 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
           }}
         />
 
-        {/* Mesonary */}
+        {/* Masonry */}
         <MasonryList
-          data={filteredProducts}
+          data={filteredProducts} // Use the fetched data from your API
           numColumns={2}
           contentContainerStyle={{ paddingHorizontal: 12 }}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item, i }: any) => (
-            <View style={{ padding: 6 }}>
-              <View
-                style={{
-                  aspectRatio: i === 0 ? 1 : 2 / 3,
-                  position: "relative",
-                  overflow: "hidden",
-                  borderRadius: 24,
-                }}
-              >
-                <Image
-                  source={{
-                    uri: item.imageUrl,
-                  }}
-                  resizeMode="cover"
-                  style={StyleSheet.absoluteFill}
-                />
+          renderItem={({ item }) => {
+            const product = item as Product;
+            return (
+              <View style={{ padding: 6 }}>
                 <View
-                  style={[
-                    StyleSheet.absoluteFill,
-                    {
-                      padding: 12,
-                    },
-                  ]}
+                  style={{
+                    aspectRatio: 1,
+                    position: "relative",
+                    overflow: "hidden",
+                    borderRadius: 24,
+                  }}
                 >
-                  <View style={{ flexDirection: "row", gap: 8, padding: 4 }}>
-                    <Text
-                      style={{
-                        flex: 1,
-                        fontSize: 16,
-                        fontWeight: "600",
-                        color: "#fff",
-                        textShadowColor: "rgba(0,0,0,0.2)",
-                        textShadowOffset: {
-                          height: 1,
-                          width: 0,
-                        },
-                        textShadowRadius: 4,
-                      }}
-                    >
-                      {item.title}
-                    </Text>
-                    <View
-                      style={{
-                        backgroundColor: colors.card,
-                        borderRadius: 100,
-                        height: 32,
-                        aspectRatio: 1,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Icons
-                        name="favorite-border"
-                        size={20}
-                        color={colors.text}
-                      />
-                    </View>
-                  </View>
-                  <View style={{ flex: 1 }} />
-                  <BlurView
-                    style={{
-                      flexDirection: "row",
-                      backgroundColor: "rgba(0,0,0,0.5)",
-                      alignItems: "center",
-                      padding: 6,
-                      borderRadius: 100,
-                      overflow: "hidden",
-                    }}
-                    intensity={20}
+                  <Image
+                    source={{ uri: product.picture }}
+                    resizeMode="cover"
+                    style={StyleSheet.absoluteFill}
+                  />
+                  <View
+                    style={[
+                      StyleSheet.absoluteFill,
+                      {
+                        padding: 12,
+                      },
+                    ]}
                   >
-                    <Text
+                    <View style={{ flexDirection: "row", gap: 8, padding: 4 }}>
+                      <Text
+                        style={{
+                          flex: 1,
+                          fontSize: 16,
+                          fontWeight: "600",
+                          color: "#fff",
+                          textShadowColor: "rgba(0,0,0,0.2)",
+                          textShadowOffset: {
+                            height: 1,
+                            width: 0,
+                          },
+                          textShadowRadius: 4,
+                        }}
+                      >
+                        {product.name}
+                      </Text>
+                      <View
+                        style={{
+                          backgroundColor: colors.card,
+                          borderRadius: 100,
+                          height: 32,
+                          aspectRatio: 1,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Icons
+                          name="favorite-border"
+                          size={20}
+                          color={colors.text}
+                        />
+                      </View>
+                    </View>
+                    <View style={{ flex: 1 }} />
+                    <BlurView
                       style={{
-                        flex: 1,
-                        fontSize: 16,
-                        fontWeight: "600",
-                        color: "#fff",
-                        marginLeft: 8,
-                      }}
-                      numberOfLines={1}
-                    >
-                      ${item.price}
-                    </Text>
-                    <TouchableOpacity
-                      style={{
-                        paddingHorizontal: 12,
-                        paddingVertical: 8,
+                        flexDirection: "row",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        alignItems: "center",
+                        padding: 6,
                         borderRadius: 100,
-                        backgroundColor: "#fff",
+                        overflow: "hidden",
                       }}
+                      intensity={20}
                     >
-                      <Icons name="add-shopping-cart" size={18} color="#000" />
-                    </TouchableOpacity>
-                  </BlurView>
+                      <Text
+                        style={{
+                          flex: 1,
+                          fontSize: 16,
+                          fontWeight: "600",
+                          color: "#fff",
+                          marginLeft: 8,
+                        }}
+                        numberOfLines={1}
+                      >
+                        ${product.amount}
+                      </Text>
+                      <TouchableOpacity
+                        style={{
+                          paddingHorizontal: 12,
+                          paddingVertical: 8,
+                          borderRadius: 100,
+                          backgroundColor: "#fff",
+                        }}
+                      >
+                        <Icons
+                          name="add-shopping-cart"
+                          size={18}
+                          color="#000"
+                        />
+                      </TouchableOpacity>
+                    </BlurView>
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
+            );
+          }}
           onEndReachedThreshold={0.1}
         />
       </SafeAreaView>
