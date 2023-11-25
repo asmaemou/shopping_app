@@ -12,6 +12,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/screens/HomeScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import { TabsStackScreenProps } from './src/navigators/TabsNavigator';
+import { ShoppingCartProvider } from './app/context/ShoppingCartContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ export default function App() {
 );
   return (
     <AuthProvider>
+      <ShoppingCartProvider>
       <SafeAreaProvider> 
       <GestureHandlerRootView style={styles.container}>
       <NavigationContainer theme={theme}>
@@ -39,6 +41,8 @@ export default function App() {
       </NavigationContainer>
     </GestureHandlerRootView>
     </SafeAreaProvider>
+      </ShoppingCartProvider>
+
     </AuthProvider>
     
     

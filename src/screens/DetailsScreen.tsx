@@ -9,19 +9,23 @@ import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { StatusBar } from "expo-status-bar";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { useShoppingCart } from "../../app/context/ShoppingCartContext";
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
 
 const DetailsScreen = ({
   navigation,
   route: {
-    params: { id },
-  },
+    params
+  }
 }: RootStackScreenProps<"Details">) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [count, setCount] = useState(1);
   const [size, setSize] = useState(SIZES[0]);
+  const {addToCart} = useShoppingCart();
+
+  console.log(params, 'product details')
 
   return (
     <View style={{ flex: 1 }}>
@@ -280,6 +284,16 @@ const DetailsScreen = ({
                 flexDirection: "row",
                 padding: 12,
               }}
+              onPress={()=> {addToCart({
+                id: 2,
+                image: require("../assets/images/photo1.jpg"),
+                name: "Tomato",
+                price: 5,
+                amountTaken: 6,
+                quantity: 4
+              });
+              navigation.navigate("Cart")
+            }}
             >
               <Text
                 style={{

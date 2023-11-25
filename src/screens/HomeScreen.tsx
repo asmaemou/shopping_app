@@ -18,6 +18,7 @@ import CustomBackdrop from "../components/CustomBackdrop";
 import FilterView from "../components/FilterView";
 import { TabsStackScreenProps } from "../navigators/TabsNavigator";
 import { useAuth } from "../../app/context/AuthContext";
+import { useShoppingCart } from "../../app/context/ShoppingCartContext";
 
 const CATEGORIES = ["Shirts", "Shoes", "Skirt", "Coat"];
 
@@ -61,6 +62,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const [filteredProducts, setFilteredProducts] = useState(MESONARY_LIST_DATA);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { onLogout } = useAuth();
+  const  {addToCart} = useShoppingCart()
 
   const openFilterModal = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -198,10 +200,11 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             <Card
               onPress={() => {
                 navigation.navigate("Details", {
+                  //pass the product details here as params for the details route.
                   id: "123",
                 });
               }}
-              price={130}
+              price={131}
               imageUrl="https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80"
             />
             <View style={{ flex: 1, gap: 12 }}>

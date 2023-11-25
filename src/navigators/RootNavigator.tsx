@@ -8,13 +8,23 @@ import TabsNavigator, { TabsStackParamList } from './TabsNavigator';
 import { useAuth, AuthProvider } from '../../app/context/AuthContext';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
+import Cart from '../screens/Cart';
 
 
 export type RootStackParamList = {
   TabsStack: NavigatorScreenParams<TabsStackParamList>;
-  Details: undefined;
+  Details: { // add params to details route
+    id: number; 
+    name: string;
+    price: number;
+    amountTaken: number,
+    image : any
+    quantity: number
+    
+  };
   Login: undefined;
   SignUp: undefined;
+  Cart: undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
