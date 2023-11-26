@@ -48,6 +48,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
 
   interface Product {
+    id:number;
     category: number;
     description: string;
     stock: string;
@@ -57,6 +58,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     status: string;
     manufacturer: string;
     picture: string;
+    quantity:number;
   }
 
   const openFilterModal = useCallback(() => {
@@ -118,7 +120,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
         price={item.amount}
         imageUrl={item.picture}
         onPress={() => {
-          navigation.navigate("Details", { id: item.id });
+          navigation.navigate("Details", item);
         }}
       />
     );
@@ -200,29 +202,31 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             >
               New Collections
             </Text>
-            <Carousel
-          data={newCollections}
-          renderItem={renderCarouselItem}
-          sliderWidth={screenWidth} 
-          itemWidth={screenWidth-60} 
-          layout={'default'}
-          containerCustomStyle={{ flexGrow: 0 }}
-        />
+            
             <TouchableOpacity>
               {/* <Text style={{ color: colors.primary }}>See All</Text> */}
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: "row", height: 200, gap: 12 }}>
-            {newCollections.map((collection) => (
+            {/* {newCollections.map((collection) => (
               <Card
                 key={collection.name} // Use an appropriate unique key
                 onPress={() => {
-                  navigation.navigate("Details", { id: collection }); // Adjust as needed
+                  navigation.navigate("Details", collection); // Adjust as needed
                 }}
                 price={collection.amount}
                 imageUrl={collection.picture}
               />
-            ))}
+            ))} */}
+            <Carousel
+              data={newCollections}
+              renderItem={renderCarouselItem}
+              sliderWidth={300} 
+              itemWidth={150} 
+              loop={true}
+              layout={'default'}
+              containerCustomStyle={{ flexGrow: 0 }}
+        />
           </View>
         </View>
 

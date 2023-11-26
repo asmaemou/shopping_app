@@ -25,6 +25,7 @@ const DetailsScreen = ({
   const [size, setSize] = useState(SIZES[0]);
   const {addToCart} = useShoppingCart();
 
+  const product = params
   console.log(params, 'product details')
 
   return (
@@ -284,14 +285,7 @@ const DetailsScreen = ({
                 flexDirection: "row",
                 padding: 12,
               }}
-              onPress={()=> {addToCart({
-                id: 2,
-                image: require("../assets/images/photo1.jpg"),
-                name: "Tomato",
-                price: 5,
-                amountTaken: 6,
-                quantity: 4
-              });
+              onPress={()=> {addToCart(product);
               navigation.navigate("Cart")
             }}
             >

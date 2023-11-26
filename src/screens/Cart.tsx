@@ -1,246 +1,118 @@
-import { View, Text, StyleSheet, FlatList, Image } from "react-native";
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import React from "react";
-import Icon from "react-native-vector-icons/Ionicons";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import Icon from "react-native-vector-icons/MaterialIcons"; // Using MaterialIcons for consistency
 import { useShoppingCart } from "../../app/context/ShoppingCartContext";
-
-const data = [
-  {
-    id: 1,
-    image: require("../assets/images/photo1.jpg"),
-    name: "Orange",
-    price: 10,
-    amountTaken: 7,
-  },
-  {
-    id: 2,
-    image: require("../assets/images/photo1.jpg"),
-    name: "Tomato",
-    price: 5,
-    amountTaken: 6,
-  },
-];
+import { useTheme } from "@react-navigation/native"; // Import useTheme for theme colors
 
 const Cart = ({ navigation }) => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useShoppingCart();
-  const renderItem = ({ item, index }: { item: any; index: number }) => {
-    const { itemContainerStyle, lastItemStyle, imageStyle, textStyle, counterStyle, priceStyle } =
-      styles;
+  const { colors } = useTheme(); // Use theme colors
 
+  const renderItem = ({ item, index }) => {
     return (
-      <View style={index + 1 === data.length ? lastItemStyle : itemContainerStyle}>
-        <Image source={item.image} style={imageStyle} />
-
-        <View style={textStyle}>
-          <Text style={{ color: "#2e2f30" }}>{item.name}</Text>
-          <View style={priceStyle}>
-            <Text style={{ color: "#2e2f30", fontSize: 12 }}>${item.price * item.quantity}</Text>
+      <View style={styles.itemContainerStyle}>
+        <Image source={{ uri: item.picture }} style={styles.imageStyle} />
+        <View style={styles.textStyle}>
+          <Text style={{ color: colors.text, fontSize: 16 }}>{item.name}</Text>
+          <View style={styles.priceStyle}>
+            <Text style={{ color: colors.text }}>${item.amount}</Text>
           </View>
         </View>
-
-        <View style={counterStyle}>
-          <TouchableOpacity
-            onPress={() => decreaseQuantity(item)}
-            style={{
-              width: 34,
-              aspectRatio: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 34,
-            }}
-          >
-            <Icon.Button
-              name="ios-remove"
-              size={15}
-              color="#fff"
-              backgroundColor="#fff"
-              style={{
-                borderRadius: 15,
-                backgroundColor: "#bbb",
-                height: 30,
-                width: 30,
-              }}
-              iconStyle={{ marginRight: 0 }}
-            />
+        <View style={styles.counterStyle}>
+          <TouchableOpacity onPress={() => decreaseQuantity(item)} style={styles.counterButtonStyle}>
+            <Icon name="remove" size={20} color={colors.text} />
           </TouchableOpacity>
-          <Text>{item.quantity}</Text>
-          <TouchableOpacity
-            onPress={() => increaseQuantity(item)}
-            style={{
-              width: 34,
-              aspectRatio: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 34,
-            }}
-          >
-            <Icon.Button
-              name="ios-add"
-              size={15}
-              color="#fff"
-              backgroundColor="#fff"
-              style={{
-                borderRadius: 15,
-                backgroundColor: "#bbb",
-                height: 30,
-                width: 30,
-              }}
-              iconStyle={{ marginRight: 0 }}
-            />
+          <Text style={{ color: colors.text }}>{item.quantity}</Text>
+          <TouchableOpacity onPress={() => increaseQuantity(item)} style={styles.counterButtonStyle}>
+            <Icon name="add" size={20} color={colors.text} />
           </TouchableOpacity>
         </View>
       </View>
     );
   };
-  return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.headerStyle}></View>
-      {/* <ItemsContainer /> */}
-      <View style={styles.itemsContainerStyle}>
-        <FlatList
-          data={cart.items}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()} // Added toString() to ensure a string key
-        />
-      </View>
-      {/* <BasketContainer /> */}
-      <View style={styles.footerStyle}>
-        <View style={styles.totalContainerStyle}>
-          <View style={styles.goodsStyle}>
-            <Icon name="ios-cart" size={20} style={{ marginRight: 8 }} />
-            <Text>{`${cart.items.length} product`}</Text>
-          </View>
 
-          <View style={styles.totalStyle}>
-            <Text>Total - </Text>
-            <Text>
-              {
-              `$ ${cart.items.reduce((total, product) => {
-                return total + product.price * product.quantity;
-              }, 0)}`
-              }
-            </Text>
-          </View>
-        </View>
-        <View style={styles.buttonContainerStyle}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <View style={styles.closeButtonStyle}>
-            <Text style={{ color: "#fff" }}>Close</Text>
-          </View>
+  return (
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <FlatList
+        data={cart.items}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ padding: 16 }}
+      />
+      <View style={styles.footerStyle}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButtonStyle}>
+          <Text style={{ color: "#fff" }}>Close</Text>
         </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Payment")}>
-            <View style={styles.checkoutButtonStyle}>
-              <Text style={{ color: "#fff" }}>Go to checkout</Text>
-            </View>
-          </TouchableOpacity>
+        <View style={styles.totalContainerStyle}>
+          <Text style={{ color: colors.text }}>Total: </Text>
+          <Text style={{ color: colors.text }}>
+            ${cart.items.reduce((total, product) => total + product.amount * product.quantity, 0)}
+          </Text>
         </View>
+        <TouchableOpacity onPress={() => navigation.navigate("Payment")} style={styles.checkoutButtonStyle}>
+          <Text style={{ color: "#fff" }}>Go to checkout</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  headerStyle: {
-    flex: 0.4,
-    elevation: 2,
-    marginTop: 20,
+  itemContainerStyle: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    padding: 12,
+    borderRadius: 24,
+    backgroundColor: "#fff",
+    marginBottom: 8,
     alignItems: "center",
-    paddingLeft: 15,
-    paddingRight: 15,
-    borderBottomWidth: 1,
-    borderColor: "#e2e2e2",
-  },
-  containerStyle: {
-    flexDirection: "row",
-    flex: 1,
-    borderBottomWidth: 1,
-    borderColor: "#e2e2e2",
-    padding: 10,
-    paddingLeft: 15,
-    backgroundColor: "#fff",
-  },
-  itemsContainerStyle: {
-    flex: 4,
-    backgroundColor: "#DCDCDC",
-  },
-  lastItemStyle: {
-    flexDirection: "row",
-    flex: 1,
-    padding: 10,
-    paddingLeft: 15,
-    backgroundColor: "#fff",
   },
   imageStyle: {
-    width: 50,
-    height: 50,
-    marginRight: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 16,
   },
   textStyle: {
     flex: 2,
     justifyContent: "center",
   },
   priceStyle: {
-    backgroundColor: "#ddd",
-    width: 40,
-    alignItems: "center",
-    marginTop: 3,
-    borderRadius: 3,
+    marginTop: 4,
   },
   counterStyle: {
-    flex: 1,
     flexDirection: "row",
-    justifyContent: "space-around",
     alignItems: "center",
   },
+  counterButtonStyle: {
+    marginHorizontal: 8,
+    borderRadius: 15,
+    padding: 4,
+    backgroundColor: "#e0e0e0",
+  },
   footerStyle: {
-    flex: 1,
-    paddingRight: 15,
-    paddingLeft: 15,
+    padding: 16,
     borderTopWidth: 1,
     borderColor: "#e2e2e2",
-  },
-  buttonContainerStyle: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingTop: 15,
+    backgroundColor: "#f8f9fa",
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Aligns the buttons to each end
   },
   closeButtonStyle: {
-    backgroundColor: "#7f8c8d",
-    padding: 10,
-    paddingRight: 30,
-    paddingLeft: 30,
-    borderRadius: 3,
-  },
-  checkoutButtonStyle: {
-    backgroundColor: "#f39c12",
-    padding: 10,
-    paddingRight: 60,
-    paddingLeft: 60,
-    borderRadius: 3,
+    backgroundColor: "#95a5a6",
+    padding: 12,
+    borderRadius: 24,
+    alignItems: "center",
   },
   totalContainerStyle: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingTop: 15,
+    alignItems: 'center', // Centers the content vertically
   },
-  goodsStyle: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  totalStyle: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  itemContainerStyle: {
-    flexDirection: "row",
-    flex: 1,
-    borderBottomWidth: 1,
-    borderColor: "#e2e2e2",
-    padding: 10,
-    paddingLeft: 15,
-    backgroundColor: "#fff",
+  checkoutButtonStyle: {
+    backgroundColor: "#2ecc71",
+    padding: 12,
+    borderRadius: 24,
+    alignItems: "center",
   },
 });
 

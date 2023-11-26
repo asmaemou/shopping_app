@@ -14,12 +14,17 @@ import Cart from '../screens/Cart';
 export type RootStackParamList = {
   TabsStack: NavigatorScreenParams<TabsStackParamList>;
   Details: { // add params to details route
-    id: number; 
+    id:number;
+    category: number;
+    description: string;
+    stock: string;
+    rating: string;
     name: string;
-    price: number;
-    amountTaken: number,
-    image : any
-    quantity: number
+    amount: number;
+    status: string;
+    manufacturer: string;
+    picture: string;
+    quantity:number;
     
   };
   Login: undefined;

@@ -1,14 +1,19 @@
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
 
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  amountTaken: number,
-  image : any
-  quantity: number
-  
-}
+
+  interface Product {
+    id:number;
+    category: number;
+    description: string;
+    stock: string;
+    rating: string;
+    name: string;
+    amount: number;
+    status: string;
+    manufacturer: string;
+    picture: string;
+    quantity:number;
+  }
 
 interface State {
   items: Product[];
