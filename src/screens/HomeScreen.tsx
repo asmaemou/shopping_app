@@ -118,6 +118,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
       <Card
         key={index}
         price={item.amount}
+        name={item.name}
         imageUrl={item.picture}
         onPress={() => {
           navigation.navigate("Details", item);
@@ -440,10 +441,12 @@ export default HomeScreen;
 
 const Card = ({
   price,
+  name, // Add the name prop
   imageUrl,
   onPress,
 }: {
   price: number;
+  name: string; // Add the name prop
   imageUrl: string;
   onPress?: () => void;
 }) => {
@@ -483,6 +486,21 @@ const Card = ({
       >
         <Text style={{ fontSize: 14, fontWeight: "600", color: "#fff" }}>
           ${price}
+        </Text>
+      </View>
+      <View
+        style={{
+          position: "absolute",
+          left: 12,
+          bottom: 12,
+          paddingHorizontal: 12,
+          paddingVertical: 8,
+          backgroundColor: "rgba(0,0,0,0.25)",
+          borderRadius: 100,
+        }}
+      >
+        <Text style={{ fontSize: 14, fontWeight: "600", color: "#fff" }}>
+          {name}
         </Text>
       </View>
     </TouchableOpacity>

@@ -1,38 +1,61 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
-import React, { useRef, useState } from "react";
-import { RootStackScreenProps } from "../navigators/RootNavigator";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import Icons from "@expo/vector-icons/MaterialIcons";
 import { StatusBar } from "expo-status-bar";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { useSafeAreaInsets, SafeAreaView } from "react-native-safe-area-context";
+import Icons from "@expo/vector-icons/MaterialIcons";
+import { RootStackScreenProps } from "../navigators/RootNavigator";
 import { useShoppingCart } from "../../app/context/ShoppingCartContext";
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
 
 const DetailsScreen = ({
   navigation,
-  route: {
-    params
-  }
+  route: { params },
 }: RootStackScreenProps<"Details">) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [count, setCount] = useState(1);
   const [size, setSize] = useState(SIZES[0]);
-  const {addToCart} = useShoppingCart();
+  const { addToCart } = useShoppingCart();
+  const [productDetails, setProductDetails] = useState(null);
 
-  const product = params
-  console.log(params, 'product details')
+  useEffect(() => {
+    // Check if params object has the expected structure
+    console.log("Params:", params.id);
+
+    if (params && params.id) {
+      // Fetch product details from the backend
+      const apiEndpoint = `http://10.126.110.98:8000/newcollections/${params.id}`;
+
+      const fetchProductDetails = async () => {
+        try {
+          const response = await fetch(apiEndpoint);
+          const data = await response.json();
+          setProductDetails(data);
+          console.log("Product Details:", data);
+        } catch (error) {
+          console.error("Error fetching product details:", error);
+        }
+      };
+
+      fetchProductDetails();
+    } else {
+      console.error("Missing or invalid 'id' parameter in the route.");
+    }
+  }, [params]);
+
+  if (!productDetails) {
+    // Loading indicator or other UI for when the data is being fetched
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <View style={{ flex: 1 }}>
       <Image
         source={{
-          uri: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
+          uri: productDetails.picture, // Use the actual key for the image in your response
         }}
         style={{ flex: 1 }}
       />
@@ -110,7 +133,7 @@ const DetailsScreen = ({
       >
         <View style={{ padding: 16, gap: 16, flex: 1 }}>
           <Text style={{ fontSize: 20, fontWeight: "600", color: colors.text }}>
-            PUMA Everyday Hussle
+            {productDetails.name}
           </Text>
 
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -133,7 +156,7 @@ const DetailsScreen = ({
                   marginTop: 4,
                 }}
               >
-                3.0 (250K Reviews)
+                {productDetails.rating} 
               </Text>
             </View>
 
@@ -253,9 +276,7 @@ const DetailsScreen = ({
               style={{ color: colors.text, opacity: 0.75 }}
               numberOfLines={3}
             >
-              Aute magna dolore sint ipsum dolor fugiat. Ad magna ad elit labore
-              culpa sunt sint laboris consectetur sunt. Lorem excepteur occaecat
-              reprehenderit nostrud culpa ad ex exercitation tempor.
+              {productDetails.description}
             </Text>
           </View>
 
@@ -270,7 +291,7 @@ const DetailsScreen = ({
               <Text
                 style={{ color: colors.text, fontSize: 18, fontWeight: "600" }}
               >
-                ${(25000).toLocaleString()}
+                ${productDetails.amount}
               </Text>
             </View>
 
@@ -285,9 +306,10 @@ const DetailsScreen = ({
                 flexDirection: "row",
                 padding: 12,
               }}
-              onPress={()=> {addToCart(product);
-              navigation.navigate("Cart")
-            }}
+              onPress={() => {
+                addToCart(productDetails);
+                navigation.navigate("Cart");
+              }}
             >
               <Text
                 style={{

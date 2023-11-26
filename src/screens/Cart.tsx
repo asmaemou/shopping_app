@@ -37,7 +37,7 @@ const Cart = ({ navigation }) => {
         data={cart.items}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ padding: 16 }}
+        contentContainerStyle={{ padding: 16, paddingTop: 75  }}
       />
       <View style={styles.footerStyle}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButtonStyle}>
