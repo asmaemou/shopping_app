@@ -44,9 +44,12 @@ const cartReducer = (state: State, action: Action): State => {
         items: [...state.items, action.payload],
       };
     case 'REMOVE_FROM_CART':
+      console.log('Removing item:', action.payload);
+      const newItems = state.items.filter((item) => item.id !== action.payload.id);
+      console.log('New items:', newItems);
       return {
         ...state,
-        items: state.items.filter((item) => item.id !== action.payload.id),
+        items: newItems,
       };
     // Add more cases for other actions as needed
     case 'INCREASE_QUANTITY':
