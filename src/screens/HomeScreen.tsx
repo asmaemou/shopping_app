@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import Carousel from 'react-native-snap-carousel';
-import { Dimensions,TextInput } from 'react-native';
-
+import Carousel from "react-native-snap-carousel";
+import { Dimensions, TextInput } from "react-native";
 import {
   View,
   Text,
@@ -31,7 +30,7 @@ const CATEGORY_MAP = {
   4: "Coat",
 };
 const CATEGORY_IDS = [1, 2, 3, 4]; // Define category IDs
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = Dimensions.get("window").width;
 
 const API_URL = "http://10.126.110.98:8000";
 const AVATAR_URL =
@@ -44,11 +43,10 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { onLogout } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [newCollections, setNewCollections] = useState<Product[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-
+  const [searchQuery, setSearchQuery] = useState("");
 
   interface Product {
-    id:number;
+    id: number;
     category: number;
     description: string;
     stock: string;
@@ -58,8 +56,23 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     status: string;
     manufacturer: string;
     picture: string;
-    quantity:number;
+    quantity: number;
+    isFavorite: boolean;
   }
+
+
+  
+  const toggleFavorite = (productId: number) => {
+    setProducts(currentProducts =>
+      currentProducts.map(product => {
+        if (product.id === productId) {
+          // Toggle the isFavorite property
+          return { ...product, isFavorite: !product.isFavorite };
+        }
+        return product;
+      }),
+    );
+  };
 
   const openFilterModal = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -80,7 +93,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
   const fetchNewCollections = async () => {
     try {
-      const response = await fetch(`${API_URL}/newcollections/`); 
+      const response = await fetch(`${API_URL}/newcollections/`);
       const data = await response.json();
       setNewCollections(data);
     } catch (error) {
@@ -91,7 +104,8 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const handleSearchChange = (query) => {
     setSearchQuery(query);
   };
-  
+
+
 
   useEffect(() => {
     fetchProducts();
@@ -100,16 +114,17 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
   // Function to filter products based on the selected category ID
   let filteredProducts = products;
-  if (categoryIndex > 0) { // Check if a specific category is selected
-    
+  if (categoryIndex > 0) {
+    // Check if a specific category is selected
+
     filteredProducts = products.filter(
       (product) => product.category == categoryIndex
     );
   }
 
-  if (searchQuery !== '') {
-    filteredProducts = filteredProducts.filter(
-      (product) => product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  if (searchQuery !== "") {
+    filteredProducts = filteredProducts.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }
 
@@ -126,7 +141,6 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
       />
     );
   };
-
 
   return (
     <ScrollView>
@@ -166,26 +180,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               Discover fashion that suits your style
             </Text>
           </View>
-          <TouchableOpacity
-            style={{
-              width: 52,
-              aspectRatio: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 52,
-              borderWidth: 1,
-              borderColor: colors.border,
-            }}
-          >
-            <Icons
-              name="logout"
-              size={24}
-              color={colors.text}
-              onPress={onLogout}
-            />
-          </TouchableOpacity>
         </View>
-
 
         {/* Grid Collection View */}
         <View style={{ paddingHorizontal: 24 }}>
@@ -203,7 +198,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             >
               New Collections
             </Text>
-            
+
             <TouchableOpacity>
               {/* <Text style={{ color: colors.primary }}>See All</Text> */}
             </TouchableOpacity>
@@ -222,50 +217,48 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             <Carousel
               data={newCollections}
               renderItem={renderCarouselItem}
-              sliderWidth={300} 
-              itemWidth={150} 
+              sliderWidth={300}
+              itemWidth={150}
               loop={true}
-              layout={'default'}
+              layout={"default"}
               containerCustomStyle={{ flexGrow: 0 }}
-        />
+            />
           </View>
         </View>
 
         {/* Search Bar Section */}
-<View style={{ flexDirection: "row", paddingHorizontal: 24, gap: 12 }}>
-  <TextInput
-    style={{
-      flex: 1,
-      height: 52,
-      borderRadius: 52,
-      borderWidth: 1,
-      borderColor: colors.border,
-      alignItems: "center",
-      paddingHorizontal: 24,
-      flexDirection: "row",
-      gap: 12,
-    }}
-    placeholder="Search"
-    value={searchQuery}
-    onChangeText={handleSearchChange}
-  />
-  <TouchableOpacity
-  onPress={openFilterModal}
-  style={{
-    width: 52,
-    height: 52,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 52,
-    marginLeft: 12, // Added to create some space between search bar and filter button
-    backgroundColor: colors.primary, // Use the primary color from your theme
-  }}
->
-  <Icons name="tune" size={24} color={colors.background} />
-</TouchableOpacity>
-</View>
-
-
+        <View style={{ flexDirection: "row", paddingHorizontal: 24, gap: 12 }}>
+          <TextInput
+            style={{
+              flex: 1,
+              height: 52,
+              borderRadius: 52,
+              borderWidth: 1,
+              borderColor: colors.border,
+              alignItems: "center",
+              paddingHorizontal: 24,
+              flexDirection: "row",
+              gap: 12,
+            }}
+            placeholder="Search"
+            value={searchQuery}
+            onChangeText={handleSearchChange}
+          />
+          <TouchableOpacity
+            onPress={openFilterModal}
+            style={{
+              width: 52,
+              height: 52,
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 52,
+              marginLeft: 12, // Added to create some space between search bar and filter button
+              backgroundColor: colors.primary, // Use the primary color from your theme
+            }}
+          >
+            <Icons name="tune" size={24} color={colors.background} />
+          </TouchableOpacity>
+        </View>
 
         {/* Categories Section */}
         <FlatList
@@ -364,9 +357,12 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                         }}
                       >
                         <Icons
-                          name="favorite-border"
+                          name={
+                            product.isFavorite ? "favorite" : "favorite-border"
+                          }
                           size={20}
                           color={colors.text}
+                          onPress={() => toggleFavorite(product.id)}
                         />
                       </View>
                     </View>

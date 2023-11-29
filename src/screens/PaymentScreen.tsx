@@ -10,38 +10,50 @@ import {
 
 const PaymentScreen: React.FC = () => {
   const [cardNumber, setCardNumber] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [cvv, setCvv] = useState('');
+  const [address, setaddress] = useState('');
+  const [apt, setapt] = useState('');
+  const [country, setcountry] = useState('');
+  const [city, setCity] = useState('');
 
   const handlePayment = () => {
     // Here, you can implement payment processing logic.
     // For simplicity, we'll just display a success message.
-    Alert.alert('Payment Successful', 'Thank you for your payment!');
+    Alert.alert('Thanks for providing your delivery details.', 'We are on it!');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Payment Details</Text>
+      <Text style={styles.title}>Delivery Details:</Text>
       <TextInput
         style={styles.input}
-        placeholder="Card Number"
+        placeholder="Phone Number"
         keyboardType="numeric"
         value={cardNumber}
         onChangeText={(text) => setCardNumber(text)}
       />
       <TextInput
         style={styles.input}
-        placeholder="Expiry Date (MM/YY)"
-        value={expiryDate}
-        onChangeText={(text) => setExpiryDate(text)}
+        placeholder="Street Address"
+        value={address}
+        onChangeText={(text) => setaddress(text)}
       />
       <TextInput
         style={styles.input}
-        placeholder="CVV"
-        keyboardType="numeric"
-        secureTextEntry
-        value={cvv}
-        onChangeText={(text) => setCvv(text)}
+        placeholder="Apt,Floor,.."
+        value={apt}
+        onChangeText={(text) => setapt(text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Country"
+        value={country}
+        onChangeText={(text) => setcountry(text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="City"
+        value={city}
+        onChangeText={(text) => setCity(text)}
       />
       <TouchableOpacity style={styles.button} onPress={handlePayment}>
         <Text style={styles.buttonText}>Pay Now</Text>

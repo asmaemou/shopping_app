@@ -1,37 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, ScrollView, TextInput, TouchableOpacity, Text, Platform } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  Platform,
+} from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useAuth } from "../../app/context/AuthContext";
+import Icons from "@expo/vector-icons/MaterialIcons";
 
-const API_URL = 'http://10.126.110.98:8000';
-const defaultProfileImage = require('../../assets/asmae picture.jpeg');
+const API_URL = "http://10.126.110.98:8000";
+const defaultProfileImage = require("../../assets/asmae picture.jpeg");
 
 const UserProfile = () => {
   const [userData, setUserData] = useState({
-    fname: '',
-    lname: '',
-    email: '',
-    password: '',
-    dob: '',
-    country: '',
-    status: '',
-    role: '',
+    fname: "",
+    lname: "",
+    email: "",
+    password: "",
+    dob: "",
+    country: "",
+    status: "",
+    role: "",
     picture: null,
   });
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const { onLogout } = useAuth();
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
-  
+
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || new Date();
-    setDatePickerVisibility(Platform.OS === 'ios');
-    if (currentDate && !isNaN(currentDate.getTime())) { // Check that currentDate is a valid date
-      setUserData({ ...userData, dob: currentDate.toISOString().split('T')[0] }); // Format YYYY-MM-DD
+    setDatePickerVisibility(Platform.OS === "ios");
+    if (currentDate && !isNaN(currentDate.getTime())) {
+      // Check that currentDate is a valid date
+      setUserData({
+        ...userData,
+        dob: currentDate.toISOString().split("T")[0],
+      }); // Format YYYY-MM-DD
     }
   };
-
 
   const handleInputChange = (name, value) => {
     setUserData({ ...userData, [name]: value });
@@ -40,23 +55,23 @@ const UserProfile = () => {
   const fetchUserData = async () => {
     try {
       const response = await fetch(`${API_URL}/users/`);
-      console.log('Response Status:', response.status); 
+      console.log("Response Status:", response.status);
       const data = await response.json();
-      console.log('Data Received:', data); 
+      console.log("Data Received:", data);
       setUserData(data[0]);
-      
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error("Error fetching user data:", error);
     }
   };
 
   // Function to handle saving the user data
   const saveUserData = async () => {
     try {
-      const response = await fetch(`${API_URL}/users/update`, { // Replace '/users/update' with your actual endpoint
-        method: 'PUT', // or 'PATCH' if your backend supports it
+      const response = await fetch(`${API_URL}/users/update`, {
+        // Replace '/users/update' with your actual endpoint
+        method: "PUT", // or 'PATCH' if your backend supports it
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           // Include other headers like authorization if needed
         },
         body: JSON.stringify(userData),
@@ -64,57 +79,20 @@ const UserProfile = () => {
 
       if (response.ok) {
         const updatedData = await response.json();
-        console.log('User data saved successfully:', updatedData);
+        console.log("User data saved successfully:", updatedData);
         // Handle successful save (e.g., display a success message)
       } else {
-        console.error('Failed to save user data:', response.statusText);
+        console.error("Failed to save user data:", response.statusText);
         // Handle errors (e.g., display an error message)
       }
     } catch (error) {
-      console.error('Error saving user data:', error);
+      console.error("Error saving user data:", error);
       // Handle network errors (e.g., display an error message)
     }
   };
-        {/* Save button*/}
-
-  // const saveUserData = async () => {
-  //   const userID = userData.id; // Replace with the actual user ID obtained from your state or navigation parameters
-  //   const userUpdateUrl = `${API_URL}/users/${userID}/`; // Ensure this is the correct API endpoint for updates
-  
-  //   try {
-  //     const response = await fetch(userUpdateUrl, {
-  //       method: 'PUT', // or 'PATCH' for partial updates
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         // 'Authorization': 'Bearer ' + authToken, // Uncomment and use the correct token if authentication is required
-  //       },
-  //       body: JSON.stringify({
-  //         fname: userData.fname,
-  //         lname: userData.lname,
-  //         email: userData.email,
-  //         dob: userData.dob,
-  //         country: userData.country,
-  //         status: userData.status,
-  //         role: userData.role,
-  //         // Note: Handling file upload for 'picture' would require a different approach
-  //       }),
-  //     });
-  
-  //     if (response.ok) {
-  //       const updatedData = await response.json();
-  //       console.log('User data saved successfully:', updatedData);
-  //       alert('Profile updated successfully!');
-  //     } else {
-  //       console.error('Failed to save user data:', response.status, response.statusText);
-  //       alert('Failed to update profile.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error saving user data:', error);
-  //     alert('Error updating profile. Please try again.');
-  //   }
-  // };
-  
-
+  {
+    /* Save button*/
+  }
 
   useEffect(() => {
     fetchUserData();
@@ -124,11 +102,15 @@ const UserProfile = () => {
     <ScrollView style={styles.container}>
       <View style={styles.profileHeader}>
         <Image
-          source={userData.picture ? { uri: userData.picture } : defaultProfileImage}
+          source={
+            userData.picture ? { uri: userData.picture } : defaultProfileImage
+          }
           style={styles.profileImage}
           onError={(e) => console.log(e.nativeEvent.error)}
         />
-        <Text style={styles.profileName}>{`${userData.fname} ${userData.lname}`}</Text>
+        <Text
+          style={styles.profileName}
+        >{`${userData.fname} ${userData.lname}`}</Text>
       </View>
 
       <View style={styles.infoSection}>
@@ -137,7 +119,7 @@ const UserProfile = () => {
           <Text style={styles.label}>First Name</Text>
           <TextInput
             value={userData.fname}
-            onChangeText={(text) => handleInputChange('fname', text)}
+            onChangeText={(text) => handleInputChange("fname", text)}
             placeholder="Enter your first name"
             style={styles.input}
           />
@@ -148,7 +130,7 @@ const UserProfile = () => {
           <Text style={styles.label}>Last Name</Text>
           <TextInput
             value={userData.lname}
-            onChangeText={(text) => handleInputChange('lname', text)}
+            onChangeText={(text) => handleInputChange("lname", text)}
             placeholder="Enter your last name"
             style={styles.input}
           />
@@ -159,7 +141,7 @@ const UserProfile = () => {
           <Text style={styles.label}>Email</Text>
           <TextInput
             value={userData.email}
-            onChangeText={(text) => handleInputChange('email', text)}
+            onChangeText={(text) => handleInputChange("email", text)}
             placeholder="Enter your email"
             keyboardType="email-address"
             style={styles.input}
@@ -172,8 +154,12 @@ const UserProfile = () => {
         </TouchableOpacity>
         {isDatePickerVisible && (
           <DateTimePicker
-          value={userData.dob && !isNaN(new Date(userData.dob).getTime()) ? new Date(userData.dob) : new Date()}
-          mode="date"
+            value={
+              userData.dob && !isNaN(new Date(userData.dob).getTime())
+                ? new Date(userData.dob)
+                : new Date()
+            }
+            mode="date"
             display="default"
             onChange={handleDateChange}
             maximumDate={new Date()} // Optional: to prevent future dates
@@ -185,7 +171,7 @@ const UserProfile = () => {
           <Text style={styles.label}>Country</Text>
           <TextInput
             value={userData.country}
-            onChangeText={(text) => handleInputChange('country', text)}
+            onChangeText={(text) => handleInputChange("country", text)}
             placeholder="Enter your country"
             style={styles.input}
           />
@@ -196,7 +182,7 @@ const UserProfile = () => {
           <Text style={styles.label}>Status</Text>
           <TextInput
             value={userData.status}
-            onChangeText={(text) => handleInputChange('status', text)}
+            onChangeText={(text) => handleInputChange("status", text)}
             placeholder="Enter your status"
             style={styles.input}
           />
@@ -207,15 +193,23 @@ const UserProfile = () => {
           <Text style={styles.label}>Role</Text>
           <TextInput
             value={userData.role}
-            onChangeText={(text) => handleInputChange('role', text)}
+            onChangeText={(text) => handleInputChange("role", text)}
             placeholder="Enter your role"
             style={styles.input}
           />
         </View>
-         {/* Add Save Button */}
-         <TouchableOpacity style={styles.button} onPress={saveUserData}>
+        {/* Add Save Button */}
+        <TouchableOpacity style={styles.button} onPress={saveUserData}>
           <Text style={styles.buttonText}>Save Changes</Text>
         </TouchableOpacity>
+        {/* Logout Icon */}
+        <Icons
+          name="logout"
+          size={24}
+          color="#007AFF" // You can adjust the color as needed
+          onPress={onLogout}
+          style={styles.logoutIcon}
+        />
       </View>
     </ScrollView>
   );
@@ -224,25 +218,25 @@ const UserProfile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   profileHeader: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: "#F0F0F0",
   },
   profileImage: {
     width: 140,
     height: 140,
     borderRadius: 70,
     borderWidth: 3,
-    borderColor: '#E0E0E0',
+    borderColor: "#E0E0E0",
     marginBottom: 10,
   },
   profileName: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
+    fontWeight: "bold",
+    color: "#333333",
   },
   infoSection: {
     paddingHorizontal: 20,
@@ -254,27 +248,32 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
-    color: '#333333',
+    color: "#333333",
   },
   input: {
     height: 45,
     borderWidth: 1,
-    borderColor: '#CCCCCC',
+    borderColor: "#CCCCCC",
     borderRadius: 5,
     paddingHorizontal: 10,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     padding: 15,
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+  },
+  logoutIcon: {
+    marginTop: 20, // Adjust the margin as needed
+    alignSelf: "center", // Aligns the icon to the center, you can adjust this as needed
+    // Add other styling properties as required
   },
 });
 
