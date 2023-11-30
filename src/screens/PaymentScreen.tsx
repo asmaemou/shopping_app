@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useUserDetails } from "../../app/context/UserDetailContext";
+
 import {
   View,
   Text,
@@ -14,11 +16,21 @@ const PaymentScreen: React.FC = () => {
   const [apt, setapt] = useState('');
   const [country, setcountry] = useState('');
   const [city, setCity] = useState('');
+  const { updateUserDetails, clearUserDetails } = useUserDetails();
+
 
   const handlePayment = () => {
-    // Here, you can implement payment processing logic.
-    // For simplicity, we'll just display a success message.
+    // Update the global state with the details
+    updateUserDetails({ cardNumber, address, apt, country, city });
+    // Clearing the fields
+    setCardNumber('');
+    setaddress('');
+    setapt('');
+    setcountry('');
+    setCity('');
+
     Alert.alert('Thanks for providing your delivery details.', 'We are on it!');
+
   };
 
   return (

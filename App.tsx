@@ -13,6 +13,8 @@ import HomeScreen from './src/screens/HomeScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import { TabsStackScreenProps } from './src/navigators/TabsNavigator';
 import { ShoppingCartProvider } from './app/context/ShoppingCartContext';
+import { UserDetailsProvider } from './app/context/UserDetailContext'; // Make sure to use the correct path
+
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +33,7 @@ export default function App() {
   return (
     <AuthProvider>
       <ShoppingCartProvider>
+      <UserDetailsProvider>
       <SafeAreaProvider> 
       <GestureHandlerRootView style={styles.container}>
       <NavigationContainer theme={theme}>
@@ -41,6 +44,7 @@ export default function App() {
       </NavigationContainer>
     </GestureHandlerRootView>
     </SafeAreaProvider>
+    </UserDetailsProvider>
       </ShoppingCartProvider>
 
     </AuthProvider>

@@ -21,6 +21,7 @@ import FilterView from "../components/FilterView";
 import { TabsStackScreenProps } from "../navigators/TabsNavigator";
 import { useAuth } from "../../app/context/AuthContext";
 import { useShoppingCart } from "../../app/context/ShoppingCartContext";
+import { useUserDetails } from "../../app/context/UserDetailContext";
 
 const CATEGORIES = ["Shirts", "Shoes", "Skirt", "Coat"];
 const CATEGORY_MAP = {
@@ -44,6 +45,8 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [newCollections, setNewCollections] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const { userDetails, updateUserDetails, clearUserDetails } = useUserDetails();
+
 
   interface Product {
     id: number;
@@ -244,7 +247,8 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             value={searchQuery}
             onChangeText={handleSearchChange}
           />
-          <TouchableOpacity
+          {/* Filter Section */}
+          {/* <TouchableOpacity
             onPress={openFilterModal}
             style={{
               width: 52,
@@ -257,7 +261,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             }}
           >
             <Icons name="tune" size={24} color={colors.background} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* Categories Section */}
