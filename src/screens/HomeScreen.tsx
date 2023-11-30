@@ -46,6 +46,8 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const [newCollections, setNewCollections] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const { userDetails, updateUserDetails, clearUserDetails } = useUserDetails();
+  const { addToCart } = useShoppingCart();
+
 
 
   interface Product {
@@ -61,6 +63,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     picture: string;
     quantity: number;
     isFavorite: boolean;
+    size:string;
   }
 
 
@@ -395,6 +398,10 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                         ${product.amount}
                       </Text>
                       <TouchableOpacity
+                      onPress={() => {
+                        addToCart(product);
+                        navigation.navigate("Cart");
+                      }}
                         style={{
                           paddingHorizontal: 12,
                           paddingVertical: 8,

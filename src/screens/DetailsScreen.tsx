@@ -305,7 +305,7 @@ const DetailsScreen = ({
                 padding: 12,
               }}
               onPress={() => {
-                addToCart(productDetails);
+                addToCart({...productDetails, size});
                 navigation.navigate("Cart");
               }}
             >

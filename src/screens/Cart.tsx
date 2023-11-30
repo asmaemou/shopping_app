@@ -26,6 +26,12 @@ const Cart = ({ navigation }) => {
             <Text style={{ color: colors.text }}>${item.amount}</Text>
           </View>
         </View>
+        <View style={styles.textStyle}>
+        
+          <View style={styles.priceStyle}>
+            <Text style={{ color: colors.text }}>{item.size}</Text>
+          </View>
+        </View>
         <View style={styles.counterStyle}>
           <TouchableOpacity
             onPress={() => decreaseQuantity(item)}
