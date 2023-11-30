@@ -88,7 +88,7 @@ const DetailsScreen = ({
             <Icons name="arrow-back" size={24} color={"#fff"} />
           </TouchableOpacity>
           <View style={{ flex: 1 }} />
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{
               width: 52,
               aspectRatio: 1,
@@ -100,8 +100,8 @@ const DetailsScreen = ({
             }}
           >
             <Icons name="favorite-border" size={24} color={"#fff"} />
-          </TouchableOpacity>
-          <TouchableOpacity
+          </TouchableOpacity> */}
+          {/* <TouchableOpacity
             style={{
               width: 52,
               aspectRatio: 1,
@@ -113,10 +113,9 @@ const DetailsScreen = ({
             }}
           >
             <Icons name="add-shopping-cart" size={24} color={"#fff"} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </SafeAreaView>
-
       <BottomSheet
         detached
         snapPoints={[64, 500]}
@@ -170,7 +169,7 @@ const DetailsScreen = ({
                 borderRadius: 100,
               }}
             >
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => setCount((count) => Math.max(1, count - 1))}
                 style={{
                   backgroundColor: colors.card,
@@ -182,8 +181,8 @@ const DetailsScreen = ({
                 }}
               >
                 <Icons name="remove" size={20} color={colors.text} />
-              </TouchableOpacity>
-              <Text
+              </TouchableOpacity> */}
+              {/* <Text
                 style={{
                   fontSize: 16,
                   fontWeight: "600",
@@ -191,8 +190,8 @@ const DetailsScreen = ({
                 }}
               >
                 {count}
-              </Text>
-              <TouchableOpacity
+              </Text> */}
+              {/* <TouchableOpacity
                 onPress={() => setCount((count) => Math.min(10, count + 1))}
                 style={{
                   backgroundColor: colors.card,
@@ -204,13 +203,13 @@ const DetailsScreen = ({
                 }}
               >
                 <Icons name="add" size={20} color={colors.text} />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
 
           <View>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text
+              {/* <Text
                 style={{
                   flex: 1,
                   fontSize: 16,
@@ -220,12 +219,11 @@ const DetailsScreen = ({
                 }}
               >
                 Model is 6'1'', Size M
-              </Text>
+              </Text> */}
               <Text style={{ color: colors.text, opacity: 0.5 }}>
                 Size guide
               </Text>
             </View>
-
             <View
               style={{
                 flexDirection: "row",
@@ -332,7 +330,7 @@ const DetailsScreen = ({
                   justifyContent: "center",
                 }}
               >
-                {/* <Icons name="arrow-forward" size={24} color={colors.text} /> */}
+                <Icons name="arrow-forward" size={24} color={colors.text} />
               </View>
             </TouchableOpacity>
           </View>

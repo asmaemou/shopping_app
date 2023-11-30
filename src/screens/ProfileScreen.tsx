@@ -202,6 +202,7 @@ const UserProfile = () => {
         <TouchableOpacity style={styles.button} onPress={saveUserData}>
           <Text style={styles.buttonText}>Save Changes</Text>
         </TouchableOpacity>
+
         {/* Logout Icon */}
         <Icons
           name="logout"
