@@ -41,30 +41,31 @@ const initialState: State = {
 const cartReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'ADD_TO_CART':
-      // Check if the product already exists in the cart
-      const existingCartItemIndex = state.items.findIndex(
-        (item) => item.id == action.payload.id
-      );
+  // Check if the product with the same ID and size already exists in the cart
+  const existingCartItemIndex = state.items.findIndex(
+    (item) => item.id === action.payload.id && item.size === action.payload.size
+  );
 
-      if (existingCartItemIndex >= 0) {
-        // Product exists, increase quantity
-        const updatedItems = [...state.items]; // Copy the existing items
-        updatedItems[existingCartItemIndex] = {
-          ...updatedItems[existingCartItemIndex],
-          quantity: updatedItems[existingCartItemIndex].quantity + 1,
-        };
+  if (existingCartItemIndex >= 0) {
+    // Product with the same ID and size exists, increase quantity
+    const updatedItems = [...state.items]; // Copy the existing items
+    updatedItems[existingCartItemIndex] = {
+      ...updatedItems[existingCartItemIndex],
+      quantity: updatedItems[existingCartItemIndex].quantity + 1,
+    };
 
-        return {
-          ...state,
-          items: updatedItems,
-        };
-      } else {
-        // Product does not exist, add new item
-        return {
-          ...state,
-          items: [...state.items, {...action.payload,quantity:1}],
-        };
-      }
+    return {
+      ...state,
+      items: updatedItems,
+    };
+  } else {
+    // Product does not exist in the same size, add new item
+    return {
+      ...state,
+      items: [...state.items, { ...action.payload, quantity: 1 }],
+    };
+  }
+
     case 'REMOVE_FROM_CART':
       console.log('Removing item:', action.payload);
       const newItems = state.items.filter((item) => item.id !== action.payload.id);

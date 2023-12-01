@@ -148,6 +148,11 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     );
   };
 
+
+
+
+  
+
   return (
     <ScrollView>
       <SafeAreaView style={{ paddingVertical: 24, gap: 24 }}>
@@ -229,6 +234,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               layout={"default"}
               containerCustomStyle={{ flexGrow: 0 }}
             />
+
           </View>
         </View>
 
@@ -314,7 +320,11 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
           renderItem={({ item }) => {
             const product = item as Product;
             return (
-              <View style={{ padding: 6 }}>
+              <TouchableOpacity 
+              onPress={() => {
+                navigation.navigate("Details", product);
+              }}> 
+             <View style={{ padding: 6 }}>
                 <View
                   style={{
                     aspectRatio: 1,
@@ -322,7 +332,11 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                     overflow: "hidden",
                     borderRadius: 24,
                   }}
+                
                 >
+                  <TouchableOpacity>
+                    
+                  </TouchableOpacity>
                   <Image
                     source={{ uri: product.picture }}
                     resizeMode="cover"
@@ -418,7 +432,9 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                     </BlurView>
                   </View>
                 </View>
-              </View>
+              </View> 
+              </TouchableOpacity>
+              
             );
           }}
           onEndReachedThreshold={0.1}

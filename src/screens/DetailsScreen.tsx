@@ -27,11 +27,12 @@ const DetailsScreen = ({
 
     if (params && params.id) {
       // Fetch product details from the backend
-      const apiEndpoint = `http://10.126.110.98:8000/newcollections/${params.id}`;
+      const apiEndpoint1 = `http://10.126.110.98:8000/newcollections/${params.id}`;
+      const apiEndpoint2 = `http://10.126.110.98:8000/products/${params.id}`;
 
-      const fetchProductDetails = async () => {
+      const fetchProductNewCollectionDetail = async () => {
         try {
-          const response = await fetch(apiEndpoint);
+          const response = await fetch(apiEndpoint1);
           const data = await response.json();
           setProductDetails(data);
           console.log("Product Details:", data);
@@ -39,8 +40,18 @@ const DetailsScreen = ({
           console.error("Error fetching product details:", error);
         }
       };
-
-      fetchProductDetails();
+      fetchProductNewCollectionDetail();
+      const fetchProductDetail = async () => {
+        try {
+          const response = await fetch(apiEndpoint2);
+          const data = await response.json();
+          setProductDetails(data);
+          console.log("Product Details:", data);
+        } catch (error) {
+          console.error("Error fetching product details:", error);
+        }
+      };
+      fetchProductDetail();
     } else {
       console.error("Missing or invalid 'id' parameter in the route.");
     }
