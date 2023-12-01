@@ -1,22 +1,47 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Image,
-  TouchableOpacity,
-} from "react-native";
-import React from "react";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Using MaterialIcons for consistency
-import { useShoppingCart } from "../../app/context/ShoppingCartContext";
-import { useTheme } from "@react-navigation/native"; // Import useTheme for theme colors
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useShoppingCart } from '../../app/context/ShoppingCartContext';
+import { useTheme } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Cart = ({ navigation }) => {
-  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
-    useShoppingCart();
+  const { cart, setCart, removeFromCart, increaseQuantity, decreaseQuantity } = useShoppingCart();
   const { colors } = useTheme();
 
-  const renderItem = ({ item, index }) => {
+  // Load cart from local storage on component mount
+  useEffect(() => {
+    const loadCart = async () => {
+      const savedCart = await AsyncStorage.getItem('cart');
+      if (savedCart) {
+        setCart(JSON.parse(savedCart));
+      }
+    };
+
+    loadCart();
+  }, []);
+
+  // Save cart to local storage whenever it changes
+  useEffect(() => {
+    AsyncStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
+  // Function to handle the increase of item quantity
+  const handleIncreaseQuantity = (item) => {
+    increaseQuantity(item);
+  };
+
+  // Function to handle the decrease of item quantity
+  const handleDecreaseQuantity = (item) => {
+    decreaseQuantity(item);
+  };
+
+  // Function to handle item removal
+  const handleRemoveFromCart = (item) => {
+    removeFromCart(item);
+  };
+
+  const renderItem = ({ item }) => {
     return (
       <View style={styles.itemContainerStyle}>
         <Image source={{ uri: item.picture }} style={styles.imageStyle} />
@@ -27,29 +52,27 @@ const Cart = ({ navigation }) => {
           </View>
         </View>
         <View style={styles.textStyle}>
-        
           <View style={styles.priceStyle}>
             <Text style={{ color: colors.text }}>{item.size}</Text>
           </View>
         </View>
         <View style={styles.counterStyle}>
           <TouchableOpacity
-            onPress={() => decreaseQuantity(item)}
+            onPress={() => handleDecreaseQuantity(item)}
             style={styles.counterButtonStyle}
           >
             <Icon name="remove" size={20} color={colors.text} />
           </TouchableOpacity>
           <Text style={{ color: colors.text }}>{item.quantity}</Text>
           <TouchableOpacity
-            onPress={() => increaseQuantity(item)}
+            onPress={() => handleIncreaseQuantity(item)}
             style={styles.counterButtonStyle}
           >
             <Icon name="add" size={20} color={colors.text} />
           </TouchableOpacity>
         </View>
-        {/* Delete Button */}
         <TouchableOpacity
-          onPress={() => removeFromCart(item)}
+          onPress={() => handleRemoveFromCart(item)}
           style={styles.deleteButtonStyle}
         >
           <Icon name="delete" size={24} color={colors.text} />
@@ -61,11 +84,11 @@ const Cart = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <FlatList
-        data={cart.items}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ padding: 16, paddingTop: 75 }}
-      />
+  data={cart.items}
+  renderItem={renderItem}
+  keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
+  contentContainerStyle={{ padding: 16, paddingTop: 75 }}
+/>
       <View style={styles.footerStyle}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -76,15 +99,11 @@ const Cart = ({ navigation }) => {
         <View style={styles.totalContainerStyle}>
           <Text style={{ color: colors.text }}>Total: </Text>
           <Text style={{ color: colors.text }}>
-            $
-            {cart.items.reduce(
-              (total, product) => total + product.amount * product.quantity,
-              0
-            )}
+            ${cart.items.reduce((total, product) => total + product.amount * product.quantity, 0)}
           </Text>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.navigate("Payment")}
+          onPress={() => navigation.navigate('Payment')}
           style={styles.checkoutButtonStyle}
         >
           <Text style={{ color: "#fff" }}>Go to checkout</Text>
