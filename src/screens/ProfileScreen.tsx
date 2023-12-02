@@ -6,7 +6,7 @@ import { useAuth } from "../../app/context/AuthContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = "http://10.126.110.98:8000";
-const defaultProfileImage = require("../assets/images/profile.jpg");
+const defaultProfileImage = require("../assets/images/user.jpeg");
 
 const ProfileScreen = () => {
   const [userData, setUserData] = useState({
