@@ -152,9 +152,9 @@ const ProfileScreen = () => {
           />
         )}        */}
 
-        <TouchableOpacity style={styles.button} onPress={saveUserData}>
+        {/* <TouchableOpacity style={styles.button} onPress={saveUserData}>
           <Text style={styles.buttonText}>Save Changes</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={styles.infoSection}>
           <Text style={styles.label}>Order History:</Text>
