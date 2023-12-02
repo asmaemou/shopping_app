@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useAuth } from '../../app/context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RootStackParamList = {
   Login: undefined;
@@ -14,23 +15,42 @@ type NavigationProps = StackNavigationProp<RootStackParamList, 'Login'>;
 
 export default function SignUpScreen() {
   const navigation = useNavigation<NavigationProps>();
-  const [fullName, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmEmail] = useState('');
   const { onRegister, authState } = useAuth();
-
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const SignUp = async () => {
-    const result = await onRegister(fullName,email,password,confirmPassword);
-    if (result && result.error) {
-      alert(result.msg);
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
     }
+  
+      try {
+        // Store user credentials in local storage as a general user
+        const newUser = { firstName, lastName, email, password }; 
+        const newUserString = JSON.stringify(newUser);
+        console.log(newUserString)
+        await AsyncStorage.setItem('user', newUserString);
+
+
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setPassword('');
+        setConfirmEmail('');
+        // Navigate to login screen after successful sign up
+        navigation.navigate('Login');
+      } catch (error) {
+        console.error("Error storing user data:", error);
+      }
+    
   };
+
   return (
     <View
       style={styles.container}
-      // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      // keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
 
       <SafeAreaView style={{ flex: 1 }}>
@@ -46,13 +66,18 @@ export default function SignUpScreen() {
      
       <View style={styles.formContainer}>
         <View style={styles.form}>
-          <Text style={styles.label}>Full Name</Text>
-          <TextInput
-            style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
-            placeholder="Enter Name"
-            onChangeText={(text) => setName(text)}
-            value={fullName}
-          />
+        <TextInput
+        style={[styles.input, { paddingVertical: 10, fontSize: 15 }]}
+        placeholder="Enter First Name"
+        onChangeText={setFirstName}
+        value={firstName}
+      />
+      <TextInput
+        style={[styles.input, { paddingVertical: 10, fontSize: 15 }]}
+        placeholder="Enter Last Name"
+        onChangeText={setLastName}
+        value={lastName}
+      />
           <Text style={styles.label}>Email Address</Text>
           <TextInput
             style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
@@ -76,9 +101,10 @@ export default function SignUpScreen() {
             onChangeText={(text) => setConfirmEmail(text)}
             value={confirmPassword}
           />
-          <TouchableOpacity style={styles.signupButton}>
-            <Text style={styles.signupButtonText}>Sign Up</Text>
-          </TouchableOpacity>
+          <TouchableOpacity style={styles.signupButton} onPress={SignUp}>
+  <Text style={styles.signupButtonText}>Sign Up</Text>
+</TouchableOpacity>
+
         </View>
         <Text style={styles.orText}>Or</Text>
         <View style={styles.loginContainer}>

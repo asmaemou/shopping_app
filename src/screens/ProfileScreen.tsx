@@ -3,20 +3,18 @@ import { View, Image, StyleSheet, ScrollView, TextInput, TouchableOpacity, Text,
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { useAuth } from "../../app/context/AuthContext";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = "http://10.126.110.98:8000";
-const defaultProfileImage = require("../../assets/asmae picture.jpeg");
+const defaultProfileImage = require("../assets/images/profile.jpg");
 
 const ProfileScreen = () => {
   const [userData, setUserData] = useState({
-    fname: "",
-    lname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
-    dob: "",
-    country: "",
-    status: "",
-    role: "",
+  
     picture: null,
   });
 
@@ -35,7 +33,6 @@ const ProfileScreen = () => {
     if (currentDate && !isNaN(currentDate.getTime())) {
       setUserData({
         ...userData,
-        dob: currentDate.toISOString().split("T")[0],
       });
     }
   };
@@ -46,16 +43,21 @@ const ProfileScreen = () => {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`${API_URL}/users/`);
-      console.log("Response Status:", response.status);
-      const data = await response.json();
-      console.log("Data Received:", data);
-      setUserData(data[0]);
+      // Retrieve the user data from AsyncStorage
+      const userString = await AsyncStorage.getItem('currentUser');
+      const userData = JSON.parse(userString);
+  
+      if (userData) {
+        console.log("Data Received:", userData);
+        setUserData(userData);
+      } else {
+        console.error("No user data found in local storage.");
+      }
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error("Error fetching user data from local storage:", error);
     }
   };
-
+  
   const fetchOrderHistory = async () => {
     try {
       const response = await fetch(`${API_URL}/orders/user/${userData.email}`);
@@ -102,14 +104,14 @@ const ProfileScreen = () => {
           style={styles.profileImage}
           onError={(e) => console.log(e.nativeEvent.error)}
         />
-        <Text style={styles.profileName}>{`${userData.fname} ${userData.lname}`}</Text>
+        <Text style={styles.profileName}>{`${userData.firstName} ${userData.lastName}`}</Text>
       </View>
 
       <View style={styles.infoSection}>
         <View style={styles.inputGroup}>
           <Text style={styles.label}>First Name</Text>
           <TextInput
-            value={userData.fname}
+            value={userData.firstName}
             onChangeText={(text) => handleInputChange("fname", text)}
             placeholder="Enter your first name"
             style={styles.input}
@@ -119,7 +121,7 @@ const ProfileScreen = () => {
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Last Name</Text>
           <TextInput
-            value={userData.lname}
+            value={userData.lastName}
             onChangeText={(text) => handleInputChange("lname", text)}
             placeholder="Enter your last name"
             style={styles.input}
@@ -137,10 +139,10 @@ const ProfileScreen = () => {
           />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={showDatePicker}>
+        {/* <TouchableOpacity style={styles.button} onPress={showDatePicker}>
           <Text style={styles.buttonText}>Select Date of Birth</Text>
-        </TouchableOpacity>
-        {isDatePickerVisible && (
+        </TouchableOpacity> */}
+        {/* {isDatePickerVisible && (
           <DateTimePicker
             value={userData.dob && !isNaN(new Date(userData.dob).getTime()) ? new Date(userData.dob) : new Date()}
             mode="date"
@@ -148,37 +150,7 @@ const ProfileScreen = () => {
             onChange={handleDateChange}
             maximumDate={new Date()}
           />
-        )}
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Country</Text>
-          <TextInput
-            value={userData.country}
-            onChangeText={(text) => handleInputChange("country", text)}
-            placeholder="Enter your country"
-            style={styles.input}
-          />
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Status</Text>
-          <TextInput
-            value={userData.status}
-            onChangeText={(text) => handleInputChange("status", text)}
-            placeholder="Enter your status"
-            style={styles.input}
-          />
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Role</Text>
-          <TextInput
-            value={userData.role}
-            onChangeText={(text) => handleInputChange("role", text)}
-            placeholder="Enter your role"
-            style={styles.input}
-          />
-        </View>
+        )}        */}
 
         <TouchableOpacity style={styles.button} onPress={saveUserData}>
           <Text style={styles.buttonText}>Save Changes</Text>

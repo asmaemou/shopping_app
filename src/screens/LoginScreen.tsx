@@ -14,12 +14,39 @@ import { themeColors } from '../constants/theme';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../app/context/AuthContext';
 import { StackNavigationProp } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RootStackParamList = {
   SignUp: undefined;
 };
 
 type NavigationProps = StackNavigationProp<RootStackParamList, 'SignUp'>;
+let users = [
+  { firstName: 'John', lastName: 'Doe', email: 'john@example.com', password: '12345' },
+  { firstName: 'Jane', lastName: 'Doe', email: 'jane@example.com', password: '54321' },
+  { firstName: 'yassine', lastName: 'Ibork', email: 'y', password: '123' },
+  // Add more users as needed
+];
+const fetchUsersFromStorage = async () => {
+  try {
+    const storedUsersString = await AsyncStorage.getItem('user');
+    if (storedUsersString) {
+      const storedUser = JSON.parse(storedUsersString);
+
+      // Check if storedUser is an array, if not, make it an array
+      const storedUsersArray = Array.isArray(storedUser) ? storedUser : [storedUser];
+
+      // Combine stored users with hardcoded users
+      users = [...users, ...storedUsersArray];
+    }
+  } catch (error) {
+    console.error("Error fetching users from local storage:", error);
+  }
+};
+
+
+// Call the function to fetch and combine users
+fetchUsersFromStorage();
 
 export default function LoginScreen() {
   const navigation = useNavigation<NavigationProps>();
@@ -27,22 +54,32 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const { onLogin, onRegister, authState } = useAuth();
 
+  const findUserByEmailAndPassword = (email, password) => {
+    return users.find(user => user.email === email && user.password === password);
+  };
+  
+  
   const login = async () => {
-    const result = await onLogin(email, password);
-    if (result && result.error) {
-      alert(result.msg);
-    }
-  };
-
-  const register = async () => {
-    const result = await onRegister(email, password);
-    if (result && result.error) {
-      alert(result.msg);
+    const user = findUserByEmailAndPassword(email, password);
+  
+    if (user) {
+      try {
+        // Convert user object to string to store in AsyncStorage
+        const userString = JSON.stringify(user);
+        await AsyncStorage.setItem('currentUser', userString);
+  
+        // Perform login actions here
+        const result = await onLogin(email, password);
+      } catch (error) {
+        // Handle errors, e.g., error in storing data
+        console.error('An error occurred during login.');
+      }
     } else {
-      login();
+      console.error('Invalid email or password');
     }
   };
-
+  
+  
   return (
     <View style={styles.container}>
       <SafeAreaView
