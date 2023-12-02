@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Image,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  Platform,
-} from "react-native";
+import { View, Image, StyleSheet, ScrollView, TextInput, TouchableOpacity, Text, FlatList, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useAuth } from "../../app/context/AuthContext";
 import Icons from "@expo/vector-icons/MaterialIcons";
+import { useAuth } from "../../app/context/AuthContext";
 
 const API_URL = "http://10.126.110.98:8000";
 const defaultProfileImage = require("../../assets/asmae picture.jpeg");
 
-const UserProfile = () => {
+const ProfileScreen = () => {
   const [userData, setUserData] = useState({
     fname: "",
     lname: "",
@@ -29,6 +20,8 @@ const UserProfile = () => {
     picture: null,
   });
 
+  const [orderHistory, setOrderHistory] = useState([]);
+
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const { onLogout } = useAuth();
 
@@ -40,11 +33,10 @@ const UserProfile = () => {
     const currentDate = selectedDate || new Date();
     setDatePickerVisibility(Platform.OS === "ios");
     if (currentDate && !isNaN(currentDate.getTime())) {
-      // Check that currentDate is a valid date
       setUserData({
         ...userData,
         dob: currentDate.toISOString().split("T")[0],
-      }); // Format YYYY-MM-DD
+      });
     }
   };
 
@@ -64,15 +56,24 @@ const UserProfile = () => {
     }
   };
 
-  // Function to handle saving the user data
+  const fetchOrderHistory = async () => {
+    try {
+      const response = await fetch(`${API_URL}/orders/user/${userData.email}`);
+      console.log("Response Status:", response.status);
+      const data = await response.json();
+      console.log("Order History Data Received:", data);
+      setOrderHistory(data);
+    } catch (error) {
+      console.error("Error fetching order history:", error);
+    }
+  };
+
   const saveUserData = async () => {
     try {
       const response = await fetch(`${API_URL}/users/update`, {
-        // Replace '/users/update' with your actual endpoint
-        method: "PUT", // or 'PATCH' if your backend supports it
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          // Include other headers like authorization if needed
         },
         body: JSON.stringify(userData),
       });
@@ -80,41 +81,31 @@ const UserProfile = () => {
       if (response.ok) {
         const updatedData = await response.json();
         console.log("User data saved successfully:", updatedData);
-        // Handle successful save (e.g., display a success message)
       } else {
         console.error("Failed to save user data:", response.statusText);
-        // Handle errors (e.g., display an error message)
       }
     } catch (error) {
       console.error("Error saving user data:", error);
-      // Handle network errors (e.g., display an error message)
     }
   };
-  {
-    /* Save button*/
-  }
 
   useEffect(() => {
     fetchUserData();
+    fetchOrderHistory();
   }, []);
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.profileHeader}>
         <Image
-          source={
-            userData.picture ? { uri: userData.picture } : defaultProfileImage
-          }
+          source={userData.picture ? { uri: userData.picture } : defaultProfileImage}
           style={styles.profileImage}
           onError={(e) => console.log(e.nativeEvent.error)}
         />
-        <Text
-          style={styles.profileName}
-        >{`${userData.fname} ${userData.lname}`}</Text>
+        <Text style={styles.profileName}>{`${userData.fname} ${userData.lname}`}</Text>
       </View>
 
       <View style={styles.infoSection}>
-        {/* First Name Input */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>First Name</Text>
           <TextInput
@@ -125,7 +116,6 @@ const UserProfile = () => {
           />
         </View>
 
-        {/* Last Name Input */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Last Name</Text>
           <TextInput
@@ -136,7 +126,6 @@ const UserProfile = () => {
           />
         </View>
 
-        {/* Email Input */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Email</Text>
           <TextInput
@@ -148,25 +137,19 @@ const UserProfile = () => {
           />
         </View>
 
-        {/* Date of Birth Picker */}
         <TouchableOpacity style={styles.button} onPress={showDatePicker}>
           <Text style={styles.buttonText}>Select Date of Birth</Text>
         </TouchableOpacity>
         {isDatePickerVisible && (
           <DateTimePicker
-            value={
-              userData.dob && !isNaN(new Date(userData.dob).getTime())
-                ? new Date(userData.dob)
-                : new Date()
-            }
+            value={userData.dob && !isNaN(new Date(userData.dob).getTime()) ? new Date(userData.dob) : new Date()}
             mode="date"
             display="default"
             onChange={handleDateChange}
-            maximumDate={new Date()} // Optional: to prevent future dates
+            maximumDate={new Date()}
           />
         )}
 
-        {/* Country Input */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Country</Text>
           <TextInput
@@ -177,7 +160,6 @@ const UserProfile = () => {
           />
         </View>
 
-        {/* Status Input */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Status</Text>
           <TextInput
@@ -188,7 +170,6 @@ const UserProfile = () => {
           />
         </View>
 
-        {/* Role Input */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Role</Text>
           <TextInput
@@ -198,20 +179,48 @@ const UserProfile = () => {
             style={styles.input}
           />
         </View>
-        {/* Add Save Button */}
+
         <TouchableOpacity style={styles.button} onPress={saveUserData}>
           <Text style={styles.buttonText}>Save Changes</Text>
         </TouchableOpacity>
 
-        {/* Logout Icon */}
-        <Icons
-          name="logout"
-          size={24}
-          color="#007AFF" // You can adjust the color as needed
-          onPress={onLogout}
-          style={styles.logoutIcon}
-        />
+        <View style={styles.infoSection}>
+          <Text style={styles.label}>Order History:</Text>
+          <FlatList
+            data={orderHistory}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View>
+                <Text>{`Order ID: ${item.orderId}`}</Text>
+                <Text>{`Total Amount: $${item.totalAmount}`}</Text>
+                <Text>{`Date: ${item.date}`}</Text>
+                <Text>{`Items:`}</Text>
+                <FlatList
+                  data={item.items}
+                  keyExtractor={(subItem, subIndex) => subIndex.toString()}
+                  renderItem={({ item: subItem }) => (
+                    <View>
+                      <Text>{`Name: ${subItem.name}`}</Text>
+                      <Text>{`Size: ${subItem.size}`}</Text>
+                      <Text>{`Quantity: ${subItem.quantity}`}</Text>
+                      <Text>{`Price: $${subItem.price}`}</Text>
+                    </View>
+                  )}
+                />
+                <Text>{`\n`}</Text>
+              </View>
+            )}
+          />
+        </View>
       </View>
+
+      <Icons
+        name="logout"
+        size={24}
+        color="#007AFF"
+        onPress={onLogout}
+        style={styles.logoutIcon}
+      />
     </ScrollView>
   );
 };
@@ -272,10 +281,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   logoutIcon: {
-    marginTop: 20, // Adjust the margin as needed
-    alignSelf: "center", // Aligns the icon to the center, you can adjust this as needed
-    // Add other styling properties as required
+    marginTop: 20,
+    alignSelf: "center",
   },
 });
 
-export default UserProfile;
+export default ProfileScreen;

@@ -19,43 +19,7 @@ const DetailsScreen = ({
   const [count, setCount] = useState(1);
   const [size, setSize] = useState(SIZES[0]);
   const { addToCart } = useShoppingCart();
-  const [productDetails, setProductDetails] = useState(null);
-
-  useEffect(() => {
-    // Check if params object has the expected structure
-    console.log("Params:", params.id);
-
-    if (params && params.id) {
-      // Fetch product details from the backend
-      const apiEndpoint1 = `http://10.126.110.98:8000/newcollections/${params.id}`;
-      const apiEndpoint2 = `http://10.126.110.98:8000/products/${params.id}`;
-
-      const fetchProductNewCollectionDetail = async () => {
-        try {
-          const response = await fetch(apiEndpoint1);
-          const data = await response.json();
-          setProductDetails(data);
-          console.log("Product Details:", data);
-        } catch (error) {
-          console.error("Error fetching product details:", error);
-        }
-      };
-      fetchProductNewCollectionDetail();
-      const fetchProductDetail = async () => {
-        try {
-          const response = await fetch(apiEndpoint2);
-          const data = await response.json();
-          setProductDetails(data);
-          console.log("Product Details:", data);
-        } catch (error) {
-          console.error("Error fetching product details:", error);
-        }
-      };
-      fetchProductDetail();
-    } else {
-      console.error("Missing or invalid 'id' parameter in the route.");
-    }
-  }, [params]);
+  const productDetails = params;
 
   if (!productDetails) {
     // Loading indicator or other UI for when the data is being fetched
@@ -316,7 +280,7 @@ const DetailsScreen = ({
                 padding: 12,
               }}
               onPress={() => {
-                addToCart({...productDetails, size});
+                addToCart({...productDetails, size,isFavorite: false});
                 navigation.navigate("Cart");
               }}
             >

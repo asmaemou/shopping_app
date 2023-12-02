@@ -413,6 +413,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                       </Text>
                       <TouchableOpacity
                       onPress={() => {
+                        console.log(product,"this is the product")
                         addToCart(product);
                         navigation.navigate("Cart");
                       }}

@@ -8,8 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Cart = ({ navigation }) => {
   const { cart, setCart, removeFromCart, increaseQuantity, decreaseQuantity } = useShoppingCart();
   const { colors } = useTheme();
+  console.log( cart,"cart itemms")
 
-  // Load cart from local storage on component mount
   useEffect(() => {
     const loadCart = async () => {
       const savedCart = await AsyncStorage.getItem('cart');
@@ -21,27 +21,40 @@ const Cart = ({ navigation }) => {
     loadCart();
   }, []);
 
-  // Save cart to local storage whenever it changes
   useEffect(() => {
     AsyncStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
-  // Function to handle the increase of item quantity
   const handleIncreaseQuantity = (item) => {
     increaseQuantity(item);
   };
 
-  // Function to handle the decrease of item quantity
   const handleDecreaseQuantity = (item) => {
     decreaseQuantity(item);
   };
 
-  // Function to handle item removal
   const handleRemoveFromCart = (item) => {
     removeFromCart(item);
   };
 
+  const handleCheckout = async () => {
+    const order = {
+      items: cart.items.map(item => ({
+        name: item.name,
+        size: item.size,
+        quantity: item.quantity,
+        price: item.amount,
+      })),
+      total: cart.items.reduce((total, product) => total + product.amount * product.quantity, 0),
+    };
+
+    await AsyncStorage.setItem('order', JSON.stringify(order));
+    setCart({ items: [] });
+    navigation.navigate('Payment');
+  };
+
   const renderItem = ({ item }) => {
+    console.log(item)
     return (
       <View style={styles.itemContainerStyle}>
         <Image source={{ uri: item.picture }} style={styles.imageStyle} />
@@ -84,11 +97,11 @@ const Cart = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <FlatList
-  data={cart.items}
-  renderItem={renderItem}
-  keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
-  contentContainerStyle={{ padding: 16, paddingTop: 75 }}
-/>
+        data={cart.items}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
+        contentContainerStyle={{ padding: 16, paddingTop: 75 }}
+      />
       <View style={styles.footerStyle}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -103,7 +116,7 @@ const Cart = ({ navigation }) => {
           </Text>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Payment')}
+          onPress={handleCheckout}
           style={styles.checkoutButtonStyle}
         >
           <Text style={{ color: "#fff" }}>Go to checkout</Text>
@@ -112,7 +125,6 @@ const Cart = ({ navigation }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   itemContainerStyle: {
     flexDirection: "row",
