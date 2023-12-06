@@ -4,11 +4,21 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useShoppingCart } from '../../app/context/ShoppingCartContext';
 import { useTheme } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+type YourOrderType = {
+  name: string;
+  date: string;
+  totalAmount: number;
+  items: Array<{
+    name: string;
+    size: string;
+    quantity: number;
+    price: number;
+  }>;
+};
 
 const Cart = ({ navigation }) => {
   const { cart, setCart, removeFromCart, increaseQuantity, decreaseQuantity } = useShoppingCart();
   const { colors } = useTheme();
-  console.log( cart,"cart itemms")
 
   useEffect(() => {
     const loadCart = async () => {
@@ -38,20 +48,32 @@ const Cart = ({ navigation }) => {
   };
 
   const handleCheckout = async () => {
-    const order = {
+    const orderName = cart.items.length > 0 ? cart.items[0].name : "New Order";
+
+    const newOrder = {
+      name: orderName, // Generate or obtain a unique ID
+      date: new Date().toISOString(), // Current date in ISO format
+      totalAmount: cart.items.reduce((total, product) => total + product.amount * product.quantity, 0),
       items: cart.items.map(item => ({
         name: item.name,
         size: item.size,
         quantity: item.quantity,
         price: item.amount,
       })),
-      total: cart.items.reduce((total, product) => total + product.amount * product.quantity, 0),
     };
+    
 
-    await AsyncStorage.setItem('order', JSON.stringify(order));
+    let currentOrder = await AsyncStorage.getItem('UserOrder');
+    let orderArray: YourOrderType[] = currentOrder ? JSON.parse(currentOrder) : [];
+    orderArray.push(newOrder);
+  
+    await AsyncStorage.setItem('UserOrder', JSON.stringify(orderArray));
+      const orderHistoryString = await AsyncStorage.getItem('UserOrder');
+    console.log(orderHistoryString)
     setCart({ items: [] });
     navigation.navigate('Payment');
   };
+  
 
   const renderItem = ({ item }) => {
     console.log(item)
