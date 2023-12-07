@@ -36,9 +36,7 @@ const screenWidth = Dimensions.get("window").width;
 
 
 const API_URL = "http://172.20.10.2:8000";
-const AVATAR_URL =
-  "https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80";
-
+const AVATAR_URL = "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png";
 const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { colors } = useTheme();
   const [categoryIndex, setCategoryIndex] = useState(0);
@@ -219,7 +217,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               }}
               numberOfLines={1}
             >
-              Hi, {`${userData.firstName} ${userData.lastName}`}👋
+              Hi, {`${userData.firstName} ${userData.lastName}`} 👋
             </Text>
             <Text
               style={{ color: colors.text, opacity: 0.75 }}
