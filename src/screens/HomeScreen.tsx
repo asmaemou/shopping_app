@@ -22,9 +22,9 @@ import { TabsStackScreenProps } from "../navigators/TabsNavigator";
 import { useAuth } from "../../app/context/AuthContext";
 import { useShoppingCart } from "../../app/context/ShoppingCartContext";
 import { useUserDetails } from "../../app/context/UserDetailContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CATEGORIES = ["Shirts", "Shoes", "Skirt", "Coat"];
-
 const CATEGORY_MAP = {
   1: "Shirts",
   2: "Shoes",
@@ -50,7 +50,11 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { userDetails, updateUserDetails, clearUserDetails } = useUserDetails();
   const { addToCart } = useShoppingCart();
 
-
+  const [userData, setUserData] = useState({
+    firstName: "",
+    lastName: "",
+  
+  });
 
   interface Product {
     id: number;
@@ -86,6 +90,36 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     bottomSheetModalRef.current?.present();
   }, []);
 
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || new Date();
+    if (currentDate && !isNaN(currentDate.getTime())) {
+      setUserData({
+        ...userData,
+      });
+    }
+  };
+
+
+  const handleInputChange = (name, value) => {
+    setUserData({ ...userData, [name]: value });
+  };
+
+  const fetchUserData = async () => {
+    try {
+      // Retrieve the user data from AsyncStorage
+      const userString = await AsyncStorage.getItem("currentUser");
+      const userData = JSON.parse(userString);
+
+      if (userData) {
+        console.log("Data Received:", userData);
+        setUserData(userData);
+      } else {
+        console.error("No user data found in local storage.");
+      }
+    } catch (error) {
+      console.error("Error fetching user data from local storage:", error);
+    }
+  };
   const fetchProducts = async () => {
     try {
       const response = await fetch(`${API_URL}/products/`);
@@ -118,6 +152,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   useEffect(() => {
     fetchProducts();
     fetchNewCollections();
+    fetchUserData();
   }, []);
 
   // Function to filter products based on the selected category ID
@@ -184,7 +219,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               }}
               numberOfLines={1}
             >
-              Hi, Asmae 👋
+              Hi, {`${userData.firstName} ${userData.lastName}`}👋
             </Text>
             <Text
               style={{ color: colors.text, opacity: 0.75 }}

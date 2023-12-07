@@ -59,24 +59,11 @@ export default function LoginScreen() {
   };
   
   
-  const clearUserData = async () => {
-    try {
-      await AsyncStorage.removeItem('currentUser');
-      await AsyncStorage.removeItem('UserOrder');
-      // Remove other specific keys as needed
-    } catch (error) {
-      console.error('Error clearing user data:', error);
-    }
-  };
   const login = async () => {
     const user = findUserByEmailAndPassword(email, password);
   
     if (user) {
       try {
-
-        await clearUserData();
-        // Clear existing data before setting new user data
-        // await AsyncStorage.clear(); // This clears all AsyncStorage data
         // Convert user object to string to store in AsyncStorage
         const userString = JSON.stringify(user);
         await AsyncStorage.setItem('currentUser', userString);
