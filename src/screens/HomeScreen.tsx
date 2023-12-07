@@ -24,6 +24,7 @@ import { useShoppingCart } from "../../app/context/ShoppingCartContext";
 import { useUserDetails } from "../../app/context/UserDetailContext";
 
 const CATEGORIES = ["Shirts", "Shoes", "Skirt", "Coat"];
+
 const CATEGORY_MAP = {
   1: "Shirts",
   2: "Shoes",
@@ -33,7 +34,8 @@ const CATEGORY_MAP = {
 const CATEGORY_IDS = [1, 2, 3, 4]; // Define category IDs
 const screenWidth = Dimensions.get("window").width;
 
-const API_URL = "http://10.126.110.98:8000";
+
+const API_URL = "http://172.20.10.2:8000";
 const AVATAR_URL =
   "https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80";
 

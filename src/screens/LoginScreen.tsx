@@ -22,8 +22,8 @@ type RootStackParamList = {
 
 type NavigationProps = StackNavigationProp<RootStackParamList, 'SignUp'>;
 let users = [
-  { firstName: 'Oussama', lastName: 'o', email: 'oussama@example.com', password: '12345' },
-  { firstName: 'Yvan', lastName: 'y', email: 'yvan@example.com', password: '54321' },
+  { firstName: 'Oussama', lastName: 'oussama', email: 'o', password: '12345' },
+  { firstName: 'Yvan', lastName: 'junior', email: 'y', password: '54321' },
   { firstName: 'Asmae', lastName: 'mouradi', email: 'a', password: '123' },
   // Add more users as needed
 ];
@@ -59,11 +59,24 @@ export default function LoginScreen() {
   };
   
   
+  const clearUserData = async () => {
+    try {
+      await AsyncStorage.removeItem('currentUser');
+      await AsyncStorage.removeItem('UserOrder');
+      // Remove other specific keys as needed
+    } catch (error) {
+      console.error('Error clearing user data:', error);
+    }
+  };
   const login = async () => {
     const user = findUserByEmailAndPassword(email, password);
   
     if (user) {
       try {
+
+        await clearUserData();
+        // Clear existing data before setting new user data
+        // await AsyncStorage.clear(); // This clears all AsyncStorage data
         // Convert user object to string to store in AsyncStorage
         const userString = JSON.stringify(user);
         await AsyncStorage.setItem('currentUser', userString);

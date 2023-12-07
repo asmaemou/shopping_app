@@ -20,18 +20,24 @@ const PaymentScreen: React.FC = () => {
 
 
   const handlePayment = () => {
-    // Update the global state with the details
-    updateUserDetails({ cardNumber, address, apt, country, city });
-    // Clearing the fields
-    setCardNumber('');
-    setaddress('');
-    setapt('');
-    setcountry('');
-    setCity('');
-
-    Alert.alert('Thanks for providing your delivery details.', 'We are on it!');
-
+    if (!cardNumber || !address || !apt || !country || !city) {
+      // If any field is empty, show an error message
+      Alert.alert('Error', 'Please fill all the components');
+    } else {
+      // Update the global state with the details
+      updateUserDetails({ cardNumber, address, apt, country, city });
+      
+      // Clearing the fields
+      setCardNumber('');
+      setaddress('');
+      setapt('');
+      setcountry('');
+      setCity('');
+  
+      Alert.alert('Thanks for providing your delivery details.', 'We are on it!');
+    }
   };
+  
 
   return (
     <View style={styles.container}>

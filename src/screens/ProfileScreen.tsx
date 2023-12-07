@@ -15,7 +15,7 @@ import Icons from "@expo/vector-icons/MaterialIcons";
 import { useAuth } from "../../app/context/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_URL = "http://10.126.110.98:8000";
+const API_URL = "http://172.20.10.2:8000";
 const defaultProfileImage = require("../assets/images/user.jpeg");
 
 const ProfileScreen = () => {
@@ -98,32 +98,57 @@ const ProfileScreen = () => {
     return () => clearInterval(intervalId); // Clears the interval when the component unmounts
   }, []);
 
-  const saveUserData = async () => {
-    try {
-      const response = await fetch(`${API_URL}/users/update`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
+  // const saveUserData = async () => {
+  //   try {
+  //     const response = await fetch(`${API_URL}/users/update`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(userData),
+  //     });
 
-      if (response.ok) {
-        const updatedData = await response.json();
-        console.log("User data saved successfully:", updatedData);
-      } else {
-        console.error("Failed to save user data:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error saving user data:", error);
-    }
-  };
+  //     if (response.ok) {
+  //       const updatedData = await response.json();
+  //       console.log("User data saved successfully:", updatedData);
+  //     } else {
+  //       console.error("Failed to save user data:", response.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving user data:", error);
+  //   }
+  // };
 
   useEffect(() => {
     fetchUserData();
     fetchOrderHistory();
   }, []);
 
+  // const removeOrder = async (orderId) => {
+  //   const updatedOrderHistory = orderHistory.filter(
+  //     (order) => order.orderId !== orderId
+  //   );
+  //   setOrderHistory(updatedOrderHistory);
+  //   await AsyncStorage.setItem(
+  //     "UserOrder",
+  //     JSON.stringify(updatedOrderHistory)
+  //   );
+  // };
+  // const removeItemFromOrder = async (orderId, itemId) => {
+  //   // Find the order
+  //   const orderIndex = orderHistory.findIndex(order => order.orderId === orderId);
+  //   if (orderIndex === -1) return; // If the order isn't found, exit the function
+  
+  //   // Remove the item from the order
+  //   const newItems = orderHistory[orderIndex].items.filter(item => item.id !== itemId);
+  //   const newOrderHistory = [...orderHistory];
+  //   newOrderHistory[orderIndex].items = newItems;
+  
+  //   // Update the state and AsyncStorage
+  //   setOrderHistory(newOrderHistory);
+  //   await AsyncStorage.setItem("UserOrder", JSON.stringify(newOrderHistory));
+  // };
+  
   return (
     <ScrollView style={styles.container}>
       <View style={styles.profileHeader}>
@@ -189,7 +214,7 @@ const ProfileScreen = () => {
         </TouchableOpacity> */}
 
         <View style={styles.infoSection}>
-        <Text style={styles.label}>Order History:</Text>
+          <Text style={styles.labelOrder}>Order History:</Text>
           <FlatList
             data={orderHistory}
             keyExtractor={(item, index) => index.toString()}
@@ -219,6 +244,14 @@ const ProfileScreen = () => {
                         style={styles.productItemText}
                       >{`Date: ${item.date}`}</Text>
                       <Text style={styles.productItemText}>{`Items:`}</Text>
+
+                      {/* Minus Button */}
+                      {/* <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => removeItemFromOrder(item.orderId, subItem.id)}
+                        >
+                        <Icons name="remove-circle" size={24} color="red" />
+                      </TouchableOpacity> */}
                     </View>
                   )}
                 />
@@ -312,15 +345,21 @@ const styles = StyleSheet.create({
     fontSize: 16, // font size for text inside the container
     color: "#333", // dark color for text
   },
-  label: {
-    textAlign: 'center', // Centers the text
-    fontWeight: 'bold', // Makes the text bold
+  labelOrder: {
+    textAlign: "center", // Centers the text
+    fontWeight: "bold", // Makes the text bold
     fontSize: 18, // Adjust the font size as needed
     padding: 10, // Padding inside the border
     marginVertical: 10, // Vertical margin for spacing
     borderWidth: 2, // Width of the border
-    borderColor: 'green', // Color of the border
+    borderColor: "green", // Color of the border
     borderRadius: 5, // Rounded corners for the border
+  },
+  removeButton: {
+    // Style for the remove button
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
