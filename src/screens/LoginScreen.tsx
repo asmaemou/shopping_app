@@ -22,9 +22,9 @@ type RootStackParamList = {
 
 type NavigationProps = StackNavigationProp<RootStackParamList, 'SignUp'>;
 let users = [
-  { firstName: 'Oussama', lastName: 'oussama', email: 'o', password: '12345' },
-  { firstName: 'Yvan', lastName: 'junior', email: 'y', password: '1' },
-  { firstName: 'Asmae', lastName: 'mouradi', email: 'a', password: '123' },
+  { firstName: 'Oussama', lastName: 'oussama', email: 'Oussama@gmail.com', password: 'oussama123' },
+  { firstName: 'Yvan', lastName: 'junior', email: 'Yvan@gmail.com', password: 'yvan123' },
+  { firstName: 'Asmae', lastName: 'mouradi', email: 'Asmae@gmail.com', password: 'asmae123' },
   // Add more users as needed
 ];
 const fetchUsersFromStorage = async () => {
