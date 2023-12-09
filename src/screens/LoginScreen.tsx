@@ -54,13 +54,25 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const { onLogin, onRegister, authState } = useAuth();
 
-  const findUserByEmailAndPassword = (email, password) => {
-    return users.find(user => user.email === email && user.password === password);
+  const findUserByEmailAndPassword = async (email, password) => {
+    try {
+      // Retrieve the stringified user data from AsyncStorage
+      const usersString = await AsyncStorage.getItem('users');
+      // Parse the string to get an array of users
+      const usersArray = usersString ? JSON.parse(usersString) : [];
+      // Find the user in the array
+      return usersArray.find(user => user.email === email && user.password === password);
+    } catch (error) {
+      // Handle possible retrieval errors
+      console.error('Error retrieving users:', error);
+    }
+    return null; // Return null if no user is found or if there's an error
   };
   
   
+  
   const login = async () => {
-    const user = findUserByEmailAndPassword(email, password);
+    const user = await findUserByEmailAndPassword(email, password);
   
     if (user) {
       try {

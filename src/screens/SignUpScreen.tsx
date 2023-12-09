@@ -17,19 +17,31 @@ export default function SignUpScreen() {
   const navigation = useNavigation<NavigationProps>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmEmail] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const { onRegister, authState } = useAuth();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const saveNewUser = async (newUser) => {
+    try {
+      const existingUsersString = await AsyncStorage.getItem('users');
+      const existingUsers = existingUsersString ? JSON.parse(existingUsersString) : [];
+      existingUsers.push(newUser);
+      const newUsersString = JSON.stringify(existingUsers);
+      await AsyncStorage.setItem('users', newUsersString);
+    } catch (error) {
+      console.error('Error saving new user:', error);
+    }
+  };
+  
   const SignUp = async () => {
     if (password !== confirmPassword) {
       alert("Passwords do not match");
       return;
     }
-  
       try {
         // Store user credentials in local storage as a general user
         const newUser = { firstName, lastName, email, password }; 
+        await saveNewUser(newUser);
         const newUserString = JSON.stringify(newUser);
         console.log(newUserString)
         await AsyncStorage.setItem('user', newUserString);
@@ -39,7 +51,7 @@ export default function SignUpScreen() {
         setLastName('');
         setEmail('');
         setPassword('');
-        setConfirmEmail('');
+        setConfirmPassword('');
         // Navigate to login screen after successful sign up
         navigation.navigate('Login');
       } catch (error) {
@@ -98,7 +110,7 @@ export default function SignUpScreen() {
             style={[styles.input,{ paddingVertical: 10, fontSize: 15 }]}
             secureTextEntry
             placeholder="Enter your password"
-            onChangeText={(text) => setConfirmEmail(text)}
+            onChangeText={(text) => setConfirmPassword(text)}
             value={confirmPassword}
           />
           <TouchableOpacity style={styles.signupButton} onPress={SignUp}>
