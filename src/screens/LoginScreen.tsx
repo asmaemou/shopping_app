@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RootStackParamList = {
   SignUp: undefined;
+  ResetPassword: undefined;
 };
 
 type NavigationProps = StackNavigationProp<RootStackParamList, 'SignUp'>;
@@ -56,18 +57,15 @@ export default function LoginScreen() {
 
   const findUserByEmailAndPassword = async (email, password) => {
     try {
-      // Retrieve the stringified user data from AsyncStorage
-      const usersString = await AsyncStorage.getItem('users');
-      // Parse the string to get an array of users
+      const usersString = await AsyncStorage.getItem('users'); // Ensure this key matches
       const usersArray = usersString ? JSON.parse(usersString) : [];
-      // Find the user in the array
       return usersArray.find(user => user.email === email && user.password === password);
     } catch (error) {
-      // Handle possible retrieval errors
       console.error('Error retrieving users:', error);
     }
-    return null; // Return null if no user is found or if there's an error
+    return null;
   };
+  
   
   
   
@@ -119,9 +117,11 @@ export default function LoginScreen() {
               onChangeText={(text) => setPassword(text)}
               value={password}
             />
-            <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-            </TouchableOpacity>
+            <TouchableOpacity 
+            style={styles.forgotPassword}
+            onPress={() => navigation.navigate('ResetPassword')}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
             <TouchableOpacity style={styles.loginButton} onPress={login}>
               <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>

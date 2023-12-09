@@ -8,6 +8,7 @@ import TabsNavigator, { TabsStackParamList } from './TabsNavigator';
 import { useAuth, AuthProvider } from '../../app/context/AuthContext';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
+import ResetScreen from '../screens/ResetScreen';
 import Cart from '../screens/Cart';
 
 
@@ -29,6 +30,7 @@ export type RootStackParamList = {
   };
   Login: undefined;
   SignUp: undefined;
+  ResetPassword:undefined;
   Cart: undefined;
 };
 
@@ -59,6 +61,7 @@ console.log(authState, "useAuth")
         <>
           <RootStack.Screen name="Login" component={LoginScreen} />
           <RootStack.Screen name="SignUp" component={SignUpScreen} />
+          <RootStack.Screen name="ResetPassword" component={ResetScreen} />
         </>}
       </RootStack.Navigator>
  
